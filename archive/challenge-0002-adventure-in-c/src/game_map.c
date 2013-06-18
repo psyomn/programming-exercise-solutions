@@ -62,22 +62,28 @@ game_map_randomize(game_map_t * map, uint8_t algorithm){
       }
     }
   }
+
+  /* Now set the goal */
+  map->data
+    [rand() % map->width]
+    [rand() % map->height].goal = 2;
 }
 
-void
-_game_map_assign_random_link(char direction){
-}
-
+/** 
+ * Print the map
+ * @param map
+ *   is the map to print
+ */ 
 void
 game_map_print(game_map_t * map){
   int i, j;
 
   for (i = 0; i < map->height; ++i){
-    for (j = 0; j < map->width; ++j){
+  for (j = 0; j < map->width; ++j) {
       printf("%c ", 
-	map->data[j][i].p == ' ' ? 
-          map->data[j][i].visited :
-	  map->data[j][i].p);
+      map->data[j][i].p == ' ' ? 
+      map->data[j][i].visited :
+      map->data[j][i].p);
     }
     printf("\n");
   }

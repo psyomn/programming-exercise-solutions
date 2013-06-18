@@ -28,7 +28,6 @@ def fix(mx,ix,direction)
     x, y = [x, ix]
     mx[x,y] = 1 if mx[x,y] <= 0 and direction == :col
     mx[y,x] = 1 if mx[y,x] <= 0 and direction == :row
-    puts "fix #{direction} #{[x,y]}"
   end
 end
 

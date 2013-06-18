@@ -13,7 +13,8 @@ struct node {
   uint16_t * m;
 
   char visited;
-  char p;          /* For printing */ 
+  char p;
+  char goal;
 };
 
 typedef struct node node_t;

@@ -20,6 +20,7 @@ node_create(){
  
   n->p       = ' ';
   n->visited = ' ';
+  n->goal    = 0;
 
   n->m = malloc(ADVENTURE_MSG_MAX * sizeof(uint16_t));
   memset(n->m, 0, ADVENTURE_MSG_MAX);
@@ -106,7 +107,6 @@ node_link_w(node_t * n1, node_t * n2){
 void
 node_add_message(node_t * n, uint16_t id){
   int i; 
-  uint8_t found = 0;
 
   for (i = 0; i < ADVENTURE_MSG_MAX; ++i){
     if (n->m[i] == id){
@@ -116,14 +116,9 @@ node_add_message(node_t * n, uint16_t id){
 
     if (!n->m[i]){
       n->m[i] = id;
-      found = 1;
       i = ADVENTURE_MSG_MAX;
       continue;
     }
-  }
-
-  if (!found){
-    perror("Not enough space to add message");
   }
 }
 

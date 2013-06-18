@@ -40,5 +40,8 @@ game_controller_move_player(game_session_t *, uint16_t);
 void
 game_controller_look(game_session_t *);
 
+int
+game_controller_reached_goal(game_session_t *);
+
 #endif
 

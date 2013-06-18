@@ -75,16 +75,17 @@ game_controller_new_session(){
         tprint("You look around...\n");
         game_controller_look(game_session);
         game_map_print(game_session->map);
+        is_done = game_controller_reached_goal(game_session);
         break;
       case 'h':
         tprint("Help --\n"
-               "  n - move north\n"
-               "  s - move south\n"
-               "  w - move west\n"
-               "  e - move east\n"
-               "  l - look at current room\n"
-               "  q - quit this application\n"
-               "  h - print this information\n");
+          "  n - move north\n"
+          "  s - move south\n"
+          "  w - move west\n"
+          "  e - move east\n"
+          "  l - look at current room\n"
+          "  q - quit this application\n"
+          "  h - print this information\n");
       case 'i': /* Check yo self b4 u wrek yo self */
         biological_print(game_session->player);
         break;
@@ -92,8 +93,18 @@ game_controller_new_session(){
         tprint("For help on commands, type 'h'\n");
         break;
       }
+
+      if (game_session->player->hitpoints <= 0)
+        is_done = -1;
     }
   }
+
+  if (is_done == 2)
+    tprint(ADVENTURE_VICTORY_MESSAGE);
+
+  else if (is_done == -1)
+    tprint(ADVENTURE_GAME_OVER_MESSAGE);
+
   tprint("Bye\n");
 }
 
@@ -155,10 +166,11 @@ game_controller_move_player(game_session_t * gs, uint16_t direction){
   }
 
   else {
-    tprint("Bump! You hit your nose on the wall. And leave a bloody smear.\n");
-    node_add_message(& gs->map->
-                     data[gs->player_position_x][gs->player_position_y],
-                     ADVENTURE_MSG_NOSE_BLOOD_SMEAR_ID);
+    tprint("Bump! You hit your head on the wall. You feel dumber.\n");
+    --gs->player->hitpoints;
+    node_add_message(
+      &gs->map->data[gs->player_position_x][gs->player_position_y],
+      ADVENTURE_MSG_NOSE_BLOOD_SMEAR_ID);
   }
 
   gs->map->data
@@ -179,22 +191,21 @@ game_controller_move_player(game_session_t * gs, uint16_t direction){
  *   is the direction (n,s,w,e)
  */
 int
-game_controller_can_move(game_session_t * gs,
-                         char direction){
+game_controller_can_move(game_session_t * gs, char direction){
   int ret;
   switch(direction){
-    case ADVENTURE_MOVE_UP:
-      ret = (gs->player_position_y > 0) &&
-            (gs->map->data[gs->player_position_x][gs->player_position_y].n); break;
-    case ADVENTURE_MOVE_DOWN:
-      ret = (gs->player_position_y + 1 < gs->map->height) &&
-            (gs->map->data[gs->player_position_x][gs->player_position_y].s); break;
-    case ADVENTURE_MOVE_LEFT:
-      ret = (gs->player_position_x > 0) &&
-            (gs->map->data[gs->player_position_x][gs->player_position_y].w); break;
-    case ADVENTURE_MOVE_RIGHT:
-      ret = (gs->player_position_x + 1 < gs->map->width) &&
-            (gs->map->data[gs->player_position_x][gs->player_position_y].e); break;
+  case ADVENTURE_MOVE_UP:
+  ret = (gs->player_position_y > 0) &&
+        (gs->map->data[gs->player_position_x][gs->player_position_y].n); break;
+  case ADVENTURE_MOVE_DOWN:
+  ret = (gs->player_position_y + 1 < gs->map->height) &&
+        (gs->map->data[gs->player_position_x][gs->player_position_y].s); break;
+  case ADVENTURE_MOVE_LEFT:
+  ret = (gs->player_position_x > 0) &&
+        (gs->map->data[gs->player_position_x][gs->player_position_y].w); break;
+  case ADVENTURE_MOVE_RIGHT:
+  ret = (gs->player_position_x + 1 < gs->map->width) &&
+        (gs->map->data[gs->player_position_x][gs->player_position_y].e); break;
   }
   return ret; 
 }
@@ -211,5 +222,20 @@ game_controller_look(game_session_t * gs){
        [gs->player_position_x]
        [gs->player_position_y]
   );
+}
+
+/**
+ * Check to see if the current node the player is on
+ * is a goal node.
+ *
+ * @param gs
+ *   is the current game session, checked to see if 
+ *   goal is reached
+ */
+int
+game_controller_reached_goal(game_session_t * gs){
+  return 
+    gs->map->data[gs->player_position_x]
+                 [gs->player_position_y].goal;
 }
 

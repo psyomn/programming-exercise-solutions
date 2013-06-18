@@ -31,5 +31,6 @@ game_map.c
 game_controller.c
 node.c
 tprint.c
+inventory.c
 )
 

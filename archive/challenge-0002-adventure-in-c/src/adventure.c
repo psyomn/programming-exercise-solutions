@@ -23,8 +23,15 @@
 
 int main(int argc, char * argv[])
 {
-  printf("%s v%s by %s\n", ADVENTURE_APP_NAME, 
+  printf("%s v%s by %s\n\n", ADVENTURE_APP_NAME, 
     ADVENTURE_APP_VERSION, ADVENTURE_APP_AUTHOR);
+
+  printf("You're supposed to find the exit to the somewhat\n"
+    "maze-y map. If you hit your head against the wall too many\n"
+    "times you sustain too much brain damage and die.\n"
+    "\n"
+    "(If you're wondering, I get many requests to write plot lines\n"
+    "for video games)\n\n");
 
   game_controller_new_session();
   return 0;
