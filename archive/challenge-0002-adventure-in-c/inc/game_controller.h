@@ -20,13 +20,10 @@ game_session_t *
 create_game_session();
 
 void
+game_session_destroy(game_session_t *);
+
+void
 game_controller_init();
-
-void
-game_controller_start();
-
-void
-game_controller_battle();
 
 void
 game_controller_new_session();

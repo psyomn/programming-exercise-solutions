@@ -4,7 +4,11 @@
 #include "game_map.h"
 #include "game_controller.h"
 
-/* create a game map */
+/**
+ * Create a game map 
+ * @return
+ *   a game map struct with initialized nodes.
+ */
 game_map_t *
 game_map_create(){
   int i, j;
@@ -26,10 +30,17 @@ game_map_create(){
   return map;
 }
 
-/* Free the memory */
+/** 
+ * Free the memory used by the game map 
+ */
 void
-game_map_free(game_map_t * map){
+game_map_destroy(game_map_t * map){
+  int i;
 
+  for(i = 0; i < map->height; ++i)
+    free(map->data[i]);
+  
+  free(map->data);
 }
 
 /* Do not copy the map, alter it in memory */

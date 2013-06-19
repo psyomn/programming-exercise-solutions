@@ -17,7 +17,7 @@ game_map_t *
 game_map_create();
 
 void
-game_map_free(game_map_t *);
+game_map_destroy(game_map_t *);
 
 void
 game_map_randomize(game_map_t *, uint8_t);

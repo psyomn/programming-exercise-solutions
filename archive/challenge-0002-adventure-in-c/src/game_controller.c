@@ -11,20 +11,19 @@
 #include "static.h"
 #include "tprint.h"
 
-/** Do some standard game initializements */
+/** 
+ * Do some standard game initializements 
+ */
 void
 game_controller_init(){
   srand(time(NULL));
 }
 
-/** Start a game session */
 void
-game_controller_start(){
-}
-
-/** Start a battle session */
-void
-game_controller_battle(){
+game_session_destroy(game_session_t * gs){
+  game_map_destroy(gs->map);
+  biological_destroy(gs->player);
+  free(gs);
 }
 
 /**
@@ -104,6 +103,9 @@ game_controller_new_session(){
 
   else if (is_done == -1)
     tprint(ADVENTURE_GAME_OVER_MESSAGE);
+
+  /* Cleanup */
+  game_session_destroy(game_session);
 
   tprint("Bye\n");
 }

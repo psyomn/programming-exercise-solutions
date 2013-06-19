@@ -2,8 +2,8 @@
 #define __STATIC_H__
 
 /* Common static stuff*/
-#define ADVENTURE_APP_NAME    ("C Adventure")
-#define ADVENTURE_APP_VERSION ("1.0.0")
+#define ADVENTURE_APP_NAME    ("Advent C")
+#define ADVENTURE_APP_VERSION ("1.2.0")
 #define ADVENTURE_APP_AUTHOR  ("psyomn")
 
 /* See game_controller.h */

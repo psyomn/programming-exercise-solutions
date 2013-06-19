@@ -17,6 +17,16 @@ biological_create(){
 }
 
 /**
+ * Free the biological struct
+ * @param b
+ *   is the biological struct in memory that we want to free
+ */
+void
+biological_destroy(biological_t * b){
+  free(b);
+}
+
+/**
  * @param b 
  *   is the biological struct that is passed
  */

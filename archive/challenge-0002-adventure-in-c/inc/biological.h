@@ -14,6 +14,9 @@ biological biological_t;
 biological_t *
 biological_create();
 
+void
+biological_destroy(biological_t *);
+
 int 
 biological_is_dead(biological_t *);
 
