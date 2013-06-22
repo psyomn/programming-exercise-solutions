@@ -7,3 +7,13 @@ C. This was part of a challenge on /r/dailyprogrammer that can be found [here](h
 I know there's a few parts that could probably be written a `smarter'. I'm
 somewhat of a novice when it comes to C. It will eventually get better.
 
+Compiling
+=========
+
+Run the following commands. You need cmake.
+
+    mkdir build
+    cd build
+    cmake ..
+    make
+
