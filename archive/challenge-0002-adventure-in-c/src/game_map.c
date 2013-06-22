@@ -74,10 +74,12 @@ game_map_randomize(game_map_t * map, uint8_t algorithm){
     }
   }
 
+  uint16_t a, b;
+
   /* Now set the goal */
   map->data
-    [rand() % map->width]
-    [rand() % map->height].goal = 2;
+    [a = rand() % map->width]
+    [b = rand() % map->height].goal = 2;
 }
 
 /** 

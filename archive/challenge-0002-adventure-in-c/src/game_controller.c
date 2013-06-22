@@ -36,8 +36,8 @@ game_controller_new_session(){
   int              is_done   = 0;
   game_session_t * game_session;
 
-  game_session = create_game_session();
   game_controller_init();
+  game_session = create_game_session();
 
   printf("What is your name? : ");
   scanf("%s", name);
@@ -85,6 +85,7 @@ game_controller_new_session(){
           "  l - look at current room\n"
           "  q - quit this application\n"
           "  h - print this information\n");
+        break;
       case 'i': /* Check yo self b4 u wrek yo self */
         biological_print(game_session->player);
         break;
@@ -187,6 +188,7 @@ game_controller_move_player(game_session_t * gs, uint16_t direction){
 /**
  * Check to see if you can move in a direction
  * TODO: Crappy code. Will fix later.
+ *
  * @param gs 
  *   is the current game session
  * @param direction 
@@ -214,6 +216,7 @@ game_controller_can_move(game_session_t * gs, char direction){
 
 /**
  * Delegation to look of the node function. 
+ *
  * @param gs
  *   is the game session to extract the map from, and describe it.
  */
