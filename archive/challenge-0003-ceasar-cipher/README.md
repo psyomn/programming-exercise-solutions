@@ -8,5 +8,5 @@ Wrote the encryption stuff in Ada. Use like this:
 
 Compile with
 
-    gnatmake adaencrypt.adb
+    mkdir -p obj && gnatmake adaencrypt.adb -D obj
 

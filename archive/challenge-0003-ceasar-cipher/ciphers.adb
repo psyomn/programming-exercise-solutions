@@ -15,21 +15,25 @@ package body Ciphers is
                         Key    : Integer := 1) 
   return String is
     package ati renames Ada.Text_IO;
-    Result  : String(Input'Range);
-    Max_Mod : Integer;
-    Offset  : Integer;
+    Result   : String(Input'Range);
+    Max_Mod  : Integer;
+    Offset   : Integer;
+    Standard : Integer;
   begin
     for Index in Input'Range loop
 
+      -- Get the proper offset for whether the character is capital or lowcase
       case Input(Index) is
       when Capital_Character_Range => Offset := Character'Pos('A');
       when Lower_Character_Range   => Offset := Character'Pos('a');
       when others                  => null;
       end case;
 
+      -- Perform the encryption
       case Input(Index) is
       when Capital_Character_Range | Lower_Character_Range =>
-        Max_Mod       := (Character'Pos(Input(Index)) + Key) mod 26;
+        Standard      := Character'Pos(Input(Index)) - Offset;
+        Max_Mod       := (Standard + Key) mod 26;
         Result(Index) := Character'Val(Offset + Max_Mod);
       when others =>
         Result(Index) := Input(Index);
@@ -52,21 +56,25 @@ package body Ciphers is
                         Key    : Integer := 1) 
   return String is
     package ati renames Ada.Text_IO;
-    Result  : String(Input'Range);
-    Max_Mod : Integer;
-    Offset  : Integer;
+    Result   : String(Input'Range);
+    Max_Mod  : Integer;
+    Offset   : Integer;
+    Standard : Integer;
   begin
     for Index in Input'Range loop
 
+      -- Get the proper offset for whether the character is capital or lowcase
       case Input(Index) is
       when Capital_Character_Range => Offset := Character'Pos('A');
       when Lower_Character_Range   => Offset := Character'Pos('a');
       when others                  => null;
       end case;
  
+      -- Perform the decryption
       case Input(Index) is
       when Capital_Character_Range | Lower_Character_Range =>
-        Max_Mod       := (Character'Pos(Input(Index)) - Key) mod 26;
+        Standard      := Character'Pos(Input(Index)) - Offset;
+        Max_Mod       := (Standard - Key) mod 26;
         Result(Index) := Character'Val(Offset + Max_Mod);
       when others =>
         Result(Index) := Input(Index);
