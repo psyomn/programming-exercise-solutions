@@ -1,3 +1,5 @@
+with Ada.Text_IO;
+with Ada.Exceptions; use Ada.Exceptions;
 -- @author Simon Symeonidis 
 -- Contains all the required ciphers (Easy..Hard) from the challenges in this
 -- week.
@@ -12,21 +14,32 @@ package body Ciphers is
   function AlphaEncrypt(Input  : String; 
                         Key    : Integer := 1) 
   return String is
+    package ati renames Ada.Text_IO;
     Result  : String(Input'Range);
-    Max_Mod : Positive;
+    Max_Mod : Integer;
+    Offset  : Integer;
   begin
     for Index in Input'Range loop
 
       case Input(Index) is
+      when Capital_Character_Range => Offset := Character'Pos('A');
+      when Lower_Character_Range   => Offset := Character'Pos('a');
+      when others                  => null;
+      end case;
+
+      case Input(Index) is
       when Capital_Character_Range | Lower_Character_Range =>
         Max_Mod       := (Character'Pos(Input(Index)) + Key) mod 26;
-        Result(Index) := Character'Val(65 + Max_Mod);
+        Result(Index) := Character'Val(Offset + Max_Mod);
       when others =>
         Result(Index) := Input(Index);
       end case;
 
     end loop;
     return Result;
+  exception when E : others => 
+    ati.Put_Line(Exception_Name(E) & Exception_Message(E));
+    return "ERROR";
   end AlphaEncrypt;
 
   -- @param Input
@@ -38,18 +51,30 @@ package body Ciphers is
   function AlphaDecrypt(Input  : String; 
                         Key    : Integer := 1) 
   return String is
-    Result : String(Input'Range);
+    package ati renames Ada.Text_IO;
+    Result  : String(Input'Range);
+    Max_Mod : Integer;
+    Offset  : Integer;
   begin
     for Index in Input'Range loop
+
+      case Input(Index) is
+      when Capital_Character_Range => Offset := Character'Pos('A');
+      when Lower_Character_Range   => Offset := Character'Pos('a');
+      when others                  => null;
+      end case;
  
       case Input(Index) is
       when Capital_Character_Range | Lower_Character_Range =>
-        Result(Index) := Character'Val(65 + ((Character'Pos(Input(Index)) + Key) mod 26));
+        Max_Mod       := (Character'Pos(Input(Index)) - Key) mod 26;
+        Result(Index) := Character'Val(Offset + Max_Mod);
       when others =>
         Result(Index) := Input(Index);
       end case;
-
     end loop;
     return Result;
+  exception when E : others => 
+    ati.Put_Line(Exception_Name(E) & Exception_Message(E));
+    return "ERROR";
   end AlphaDecrypt;
 end Ciphers;
