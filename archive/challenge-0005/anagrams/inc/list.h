@@ -9,11 +9,14 @@
 struct list {
   void        * head; 
   struct list * tail;
+  char          mark;
 };
 
 typedef struct list list_t;
 
-void list_add_node(list_t*, void*);
+void list_add_node(list_t**, void*);
+
+void list_add_node_tail(list_t*,void*);
 
 void list_print(list_t*, size_t);
 

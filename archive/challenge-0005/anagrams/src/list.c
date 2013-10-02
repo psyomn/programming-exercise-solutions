@@ -7,7 +7,20 @@ void list_print_string(list_t*);
 void list_print_double(list_t*);
 
 void 
-list_add_node(list_t* list, void* data){
+list_add_node(list_t** list, void* data){
+  if (!list){ perror("list is null"); return;}
+
+  list_t * old_head = *list;
+  list_t * node = list_create();
+  node->head = data;
+  node->tail = old_head;
+  *list = node;
+}
+
+/* Very inefficient - took 1 minute to add 52k elements in a list vs head
+   insertions. */
+void
+list_add_node_tail(list_t* list, void* data){
   if (!list){ perror("list is null"); return;}
 
   list_t * tail = list_find_tail(list);
