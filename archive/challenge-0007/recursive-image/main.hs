@@ -1,7 +1,9 @@
-
+-- @author Simon Symeonidis 
+--   Trying to make a haskell output some pretty fractal graphics
 module Main(main) where
 
-import Ppm
+import Ppm 
 
 main = do
-  print $ test 12
+  let image = makeWhiteImage 10 10
+  print image
