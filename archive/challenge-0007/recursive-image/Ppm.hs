@@ -4,6 +4,7 @@
 -}
 module Ppm(
 PPMImage
+, Pixel
 , redOf, blueOf, greenOf
 , makePixel
 , makeImage
@@ -90,6 +91,9 @@ outputRow :: [Pixel Int] -> String
 outputRow [] = ""
 outputRow (x:xs) = pixelString x ++ " " ++ outputRow xs
 
+{- Extract the data, and delegate it to some other function
+   that knows how to take care of it (in this case this function
+   is imageStringBackend -}
 imageString :: PPMImage -> String
 imageString (PPMImage _ _ _ dat) = imageStringBackend dat
 
