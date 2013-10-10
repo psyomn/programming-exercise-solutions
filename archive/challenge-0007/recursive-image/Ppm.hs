@@ -1,11 +1,10 @@
---
--- A simple PPM library to output pictures. You can see the specification here:
---   netpbm.sourceforge.net/doc/ppm.html
--- @author Simon Symeonidis
--- 
-
+{- 
+-- Small library that produce P3 ppm images.
+-- @author Simon Symeonidis 
+-}
 module Ppm(
-redOf, blueOf, greenOf
+PPMImage
+, redOf, blueOf, greenOf
 , makePixel
 , makeImage
 , makeWhiteImage, makeBlackImage, makeRedImage, makeBlueImage, makeGreenImage
@@ -15,7 +14,8 @@ redOf, blueOf, greenOf
 -- A pixel is a tuple of RGB
 data Pixel a = Pixel a a a deriving Show
 
-type PPMImage = [[Pixel Int]]
+-- PPMImage : header, width, height, data
+data PPMImage = PPMImage String Int Int [[Pixel Int]]
 
 -- Header stuff
 ppmMagicNumber = "P3"
@@ -23,9 +23,10 @@ maxColor = 65536
 minColor = 0
 
 boundsCheck :: Int -> Int
-boundsCheck x = case x >= 0 && x <= 255 of 
-                  True -> x
-                  False -> error "Pixel values range from 0 to 255"
+boundsCheck x = 
+  case x >= minColor && x <= maxColor of 
+    True  -> x
+    False -> error "Pixel values range from 0 to 255"
 
 redOf :: Pixel t -> t
 redOf (Pixel x _ _) = x
@@ -64,15 +65,16 @@ makeRow 0  _  = []
 makeRow it px = px : makeRow (it - 1) px
 
 makeImage :: Pixel Int -> Int -> Int -> PPMImage
-makeImage _  _    0    = []
-makeImage px dimx dimy = makeRow dimx px : makeImage px dimx (dimy - 1)
+makeImage px dimx dimy = 
+  PPMImage ppmMagicNumber dimx dimy (makeImageData px dimx dimy)
 
-makeImageT :: Pixel Int -> Int -> Int -> PPMImage
-makeImageT p x y = makeImage p x y
+makeImageData :: Pixel Int -> Int -> Int -> [[Pixel Int]]
+makeImageData _  _    0    = []
+makeImageData px dimx dimy = makeRow dimx px : makeImageData px dimx (dimy - 1)
 
 makeWhiteImage x y = makeImage whitePixel x y
 makeBlackImage x y = makeImage blackPixel x y
-makeGreenImage x y = makeImage greenPixel x y 
+makeGreenImage x y = makeImage greenPixel x y
 makeBlueImage  x y = makeImage bluePixel  x y
 makeRedImage   x y = makeImage redPixel   x y
 
@@ -88,10 +90,12 @@ outputRow [] = ""
 outputRow (x:xs) = pixelString x ++ " " ++ outputRow xs
 
 imageString :: PPMImage -> String
-imageString [] = ""
-imageString (row:rows) = (outputRow row) ++ "\n" ++ imageString rows
+imageString (PPMImage _ _ _ dat) = imageStringBackend dat
+
+imageStringBackend :: [[Pixel Int]] -> String
+imageStringBackend [] = ""
+imageStringBackend (row:rows) = (outputRow row) ++ "\n" ++ imageStringBackend rows
 
 outputImage :: PPMImage -> String
-outputImage [] = ""
 outputImage img = ppmMagicNumber ++ "\n10 10\n15\n" ++ (imageString img)
 
