@@ -11,6 +11,7 @@ PPMImage
 , makeWhiteImage, makeBlackImage, makeRedImage, makeBlueImage, makeGreenImage
 , outputImage
 , setHeader, setWidth, setHeight, setData
+, getHeader, getWidth, getHeight, getData
 ) where
 
 -- A pixel is a tuple of RGB
@@ -21,7 +22,7 @@ data PPMImage = PPMImage String Int Int [[Pixel Int]]
 
 -- Header stuff
 ppmMagicNumber = "P3"
-maxColor = 65536
+maxColor = 255
 minColor = 0
 
 boundsCheck :: Int -> Int
@@ -40,19 +41,19 @@ greenOf :: Pixel t -> t
 greenOf (Pixel _ x _) = x
 
 whitePixel :: Pixel Int
-whitePixel = Pixel 254 254 254
+whitePixel = Pixel maxColor maxColor maxColor
 
 blackPixel :: Pixel Int
-blackPixel = Pixel 0 0 0
+blackPixel = Pixel minColor minColor minColor
 
 redPixel :: Pixel Int
-redPixel = Pixel 15 0 0
+redPixel = Pixel maxColor minColor minColor
 
 bluePixel :: Pixel Int
-bluePixel = Pixel 0 0 15
+bluePixel = Pixel minColor minColor maxColor
 
 greenPixel :: Pixel Int
-greenPixel = Pixel 0 15 0
+greenPixel = Pixel minColor maxColor minColor
 
 makePixel :: Int -> Int -> Int -> Pixel Int
 makePixel r g b = Pixel (boundsCheck r) (boundsCheck g) (boundsCheck b)
@@ -106,7 +107,8 @@ outputImage img =
   ppmMagicNumber ++ "\n" 
   ++ show (getWidth  img) ++ " " 
   ++ show (getHeight img) ++ "\n"
-  ++ "15\n" ++ (imageString img)
+  ++ show (maxColor) ++ "\n"
+  ++ (imageString img)
 
 setData :: PPMImage -> [[Pixel Int]] -> PPMImage
 setData (PPMImage x y z _) new = PPMImage x y z new

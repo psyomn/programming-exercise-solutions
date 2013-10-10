@@ -5,9 +5,13 @@ module Main(main) where
 import Text.Printf
 
 import Ppm 
-import Patterns
+import Ppm.Patterns
+import Ppm.Filters
 
 main = do
-  let image   = makeWhiteImage 110 110
-  let pattern = setData image (gradient 110 110)
-  printf $ outputImage pattern
+  let image   = makeRedImage 110 110
+  let dat     = revRow $ shadow $ getData image
+  let edited  = setData image dat
+  printf $ outputImage edited
+
+
