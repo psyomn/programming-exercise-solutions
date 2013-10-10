@@ -28,7 +28,7 @@ boundsCheck :: Int -> Int
 boundsCheck x = 
   case x >= minColor && x <= maxColor of 
     True  -> x
-    False -> error "Pixel values range from 0 to 255"
+    False -> error $ "Pixel values range from 0 to 255, value: " ++ show x
 
 redOf :: Pixel t -> t
 redOf (Pixel x _ _) = x

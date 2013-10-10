@@ -6,9 +6,25 @@
 module Patterns(
 columated
 , checkers
+, gradient
 ) where
 
 import Ppm
+
+{- Make a gradient with blue color-}
+gradient :: Int -> Int -> [[Pixel Int]]
+gradient _ 0 = []
+gradient x y = gradientRow x x : gradient x (y - 1)
+
+{- 
+- Make a pixel row
+- @param x are pixels left to generate
+- @param l is the total row length
+-}
+gradientRow :: Int -> Int -> [Pixel Int]
+gradientRow 0 _ = []
+gradientRow x l = 
+  makePixel 0 (x `mod` 255) 0 : gradientRow (x - 1) l
 
 {- Create Checkers, which are 1x1 in width and height -}
 checkers :: Int -> Int -> [[Pixel Int]]
@@ -34,5 +50,4 @@ columatedRow x =
   case odd x of
     True  -> makePixel 15 0 0 : columatedRow (x - 1)
     False -> makePixel 0 15 0 : columatedRow (x - 1)
-
 
