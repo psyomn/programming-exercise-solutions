@@ -9,6 +9,7 @@ PPMImage
 , makeImage
 , makeWhiteImage, makeBlackImage, makeRedImage, makeBlueImage, makeGreenImage
 , outputImage
+, setHeader, setWidth, setHeight, setData
 ) where
 
 -- A pixel is a tuple of RGB
@@ -97,5 +98,33 @@ imageStringBackend [] = ""
 imageStringBackend (row:rows) = (outputRow row) ++ "\n" ++ imageStringBackend rows
 
 outputImage :: PPMImage -> String
-outputImage img = ppmMagicNumber ++ "\n10 10\n15\n" ++ (imageString img)
+outputImage img = 
+  ppmMagicNumber ++ "\n" 
+  ++ show (getWidth  img) ++ " " 
+  ++ show (getHeight img) ++ "\n"
+  ++ "15\n" ++ (imageString img)
+
+setData :: PPMImage -> [[Pixel Int]] -> PPMImage
+setData (PPMImage x y z _) new = PPMImage x y z new
+
+setHeader :: PPMImage -> String -> PPMImage
+setHeader (PPMImage _ x y z) new = PPMImage new x y z
+
+setWidth :: PPMImage -> Int -> PPMImage
+setWidth (PPMImage x y _ z) new = PPMImage x y new z
+
+setHeight :: PPMImage -> Int -> PPMImage
+setHeight (PPMImage x _ y z) new = PPMImage x new y z
+
+getData :: PPMImage -> [[Pixel Int]]
+getData (PPMImage _ _ _ d) = d
+
+getHeader :: PPMImage -> String
+getHeader (PPMImage h _ _ _) = h
+
+getWidth :: PPMImage -> Int
+getWidth (PPMImage _ w _ _) = w
+
+getHeight :: PPMImage -> Int
+getHeight (PPMImage _ _ h _) = h
 

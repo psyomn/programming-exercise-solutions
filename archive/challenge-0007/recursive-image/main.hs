@@ -7,5 +7,5 @@ import Text.Printf
 import Ppm 
 
 main = do
-  let image = makeGreenImage 10 10
+  let image = makeGreenImage 110 110
   printf $ outputImage image
