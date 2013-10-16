@@ -4,5 +4,10 @@ all:
 clean:
 	rm -rf hi obj hi-opt obj-opt;
 
-opt:
-	ghc -O2 main.hs -odir obj-opt -hidir hi-opt/ 
+opt: clean
+	ghc -O3 main.hs -odir obj-opt -hidir hi-opt/ 
+
+# Replace with your image viewer
+s:
+	./main > out.ppm;
+	feh out.ppm

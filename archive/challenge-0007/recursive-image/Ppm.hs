@@ -50,10 +50,10 @@ redPixel :: Pixel Int
 redPixel = Pixel maxColor minColor minColor
 
 bluePixel :: Pixel Int
-bluePixel = Pixel minColor minColor maxColor
+bluePixel = Pixel minColor maxColor minColor
 
 greenPixel :: Pixel Int
-greenPixel = Pixel minColor maxColor minColor
+greenPixel = Pixel minColor minColor maxColor
 
 makePixel :: Int -> Int -> Int -> Pixel Int
 makePixel r g b = Pixel (boundsCheck r) (boundsCheck g) (boundsCheck b)

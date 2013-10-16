@@ -19,7 +19,7 @@ shadowBack (row:rows) i = (shadowRow row i) : shadowBack rows i
 
 shadowRow :: [Pixel Int] -> Int -> [Pixel Int]
 shadowRow [] _ = []
-shadowRow (p:ps) ix = safeDecreasePixel ix p : shadowRow ps (ix + 3)
+shadowRow (p:ps) ix = safeDecreasePixel ix p : shadowRow ps (ix + 1)
 
 safeDecrease :: Int -> Int
 safeDecrease x = safeDecreaseAmt x 1
@@ -27,7 +27,7 @@ safeDecrease x = safeDecreaseAmt x 1
 safeDecreaseAmt :: Int -> Int -> Int
 safeDecreaseAmt x y = case x - y <= 0 of 
                    True  -> 0
-		   False -> x - y
+                   False -> x - y
 
 safeDecreasePixel :: Int -> Pixel Int -> Pixel Int
 safeDecreasePixel 0  pix = pix

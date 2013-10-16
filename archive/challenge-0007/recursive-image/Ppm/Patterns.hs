@@ -1,8 +1,5 @@
-{-
-  Small collections of patterns to make images with.
-  @author Simon Symeonidis
--}
-
+{- Small collections of patterns to make images with.
+   @author Simon Symeonidis -}
 module Ppm.Patterns(
 columated
 , checkers
