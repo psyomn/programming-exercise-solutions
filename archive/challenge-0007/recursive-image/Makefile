@@ -8,7 +8,7 @@ opt: clean
 	ghc -O3 main.hs -odir obj-opt -hidir hi-opt/ 
 
 # Replace with your image viewer
-s:
+s: all
 	./main > out.ppm;
 	feh out.ppm
 

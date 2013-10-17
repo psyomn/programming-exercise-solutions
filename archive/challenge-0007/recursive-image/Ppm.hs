@@ -4,7 +4,7 @@
 -}
 module Ppm(
 PPMImage
-, Pixel
+, Pixel(Pixel)
 , redOf, blueOf, greenOf
 , makePixel
 , makeImage

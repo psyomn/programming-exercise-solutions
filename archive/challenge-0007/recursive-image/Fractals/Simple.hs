@@ -1,5 +1,17 @@
 {- @author Simon Symeonidis -}
-module Fractals.Simple (julia) where
+{- 
+  This contains some fractals that may be used in order to generate different
+  information, that can then be pipped to some other image library. This is 
+  here purely for math stuff. 
+
+  @author Simon Symeonidis 
+-}
+module Fractals.Simple (
+julia
+, makePlane
+, slice
+, calculate
+, calculateBool) where
 
 import Data.Complex
 
@@ -8,7 +20,7 @@ type CxDouble = Complex Double
 -- |The function allows setting a C of whatever value, but for the sake of 
 --   simplicity, we're going to use 0 
 julia :: CxDouble -> CxDouble
-julia z = z * z + (0 :+ 0)
+julia z = z * z + (1 :+ 1)
 
 -- | Check if the given point, after two iterations of a fractal function will
 --   be greater than the radius 2 (there was a theory somewhere that I read
