@@ -10,9 +10,8 @@ import Ppm.Filters
 
 import Fractals.Simple
 
+
 main = do
-  let image   = makeRedImage 510 510
-  let dat     = revRow $ shadow $ getData image
-  let edited  = setData image dat
-  printf $ outputImage edited
+  let image = makeRedImage 440 440
+  printf $ outputImage image
 
