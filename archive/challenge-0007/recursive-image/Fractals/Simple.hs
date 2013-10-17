@@ -1,4 +1,3 @@
-{- @author Simon Symeonidis -}
 {- 
   This contains some fractals that may be used in order to generate different
   information, that can then be pipped to some other image library. This is 
@@ -11,16 +10,21 @@ julia
 , makePlane
 , slice
 , calculate
+, calculateColored
 , calculateBool) where
 
 import Data.Complex
+import Ppm
 
 type CxDouble = Complex Double
+
+maxIterations :: Int
+maxIterations = 255
 
 -- |The function allows setting a C of whatever value, but for the sake of 
 --   simplicity, we're going to use 0 
 julia :: CxDouble -> CxDouble
-julia z = z * z + (1 :+ 1)
+julia z = z * z + ( (-0.835) :+ (-0.232) )
 
 -- | Check if the given point, after two iterations of a fractal function will
 --   be greater than the radius 2 (there was a theory somewhere that I read
@@ -73,3 +77,43 @@ calculateBool :: (CxDouble -> CxDouble) -> [[CxDouble]] -> [[Bool]]
 calculateBool _ []     = []
 calculateBool f (x:xs) = map (toInfinity f) x : calculateBool f xs
 
+-- | Make a colored fractal
+calculateColored :: (CxDouble -> CxDouble) -> [[CxDouble]] -> [[Pixel Int]]
+calculateColored _     [] = []
+calculateColored f (x:xs) = map (funcIterationsPixel f) x : calculateColored f xs
+
+funcIterationsPixel :: (CxDouble -> CxDouble) -> CxDouble -> Pixel Int
+funcIterationsPixel f ipoint = makePixel 0 (funcIterations f ipoint) (funcIterations f ipoint)
+
+funcIterations :: (CxDouble -> CxDouble) -> CxDouble -> Int
+funcIterations f ipoint = funcIterationsBack f ipoint 0
+
+-- | Responsible to actually calculate how many iterations until the point
+--   reaches distance > 2
+--   f      is the function to apply
+--   ipoint is the imaginary point
+--   acc    is the accumulator
+funcIterationsBack f ipoint acc =
+  case euclidean(f ipoint) > 2 && acc < maxIterations of
+    True  -> acc
+    False -> funcIterationsBack f (f ipoint) (acc + 1)
+
+-- | return a pixel color depending on the magnitude of displacement
+colorByMagnitude :: Double -> Pixel Int
+colorByMagnitude x 
+  | x < 0.2 = makePixel 255   0   0
+  | x < 0.3 = makePixel   0 255   0
+  | x < 0.4 = makePixel 255 255 255
+  | x < 0.5 = makePixel 255 255 255
+  | x < 0.6 = makePixel 190 190 190
+  | x < 0.7 = makePixel 200 200 230
+  | x < 1.0 = makePixel 200 230 200
+  | x < 1.5 = makePixel 230 200 200
+  | x < 2   = makePixel 200 200 200
+  | x < 10  = makePixel  30   0   0
+  | x < 20  = makePixel 100   0   0
+  | x < 30  = makePixel   0 100   0
+  | x < 50  = makePixel   0   0 100
+  | x < 60  = makePixel 100 100   0
+  | x > 59  = makePixel   0   0 100
+  

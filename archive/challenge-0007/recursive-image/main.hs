@@ -11,14 +11,6 @@ import Ppm.Filters
 
 import Fractals.Simple
 
-maxPlaneX = 440
-maxPlaneY = 440
-plane     = makePlane (-2) 2 maxPlaneX (-2) 2 maxPlaneY
-slplane   = slice (441) plane 
--- ^ +1 because each row has 0.0 as a point
-
-boolPlane = calculateBool julia slplane
-
 pixelBool b = 
   case b == True of
     True  -> (Pixel 255 255 255)
@@ -27,9 +19,20 @@ pixelBool b =
 buildImage     [] = [] 
 buildImage (x:xs) = map pixelBool x : buildImage xs
 
+maxPlaneX = 2000
+maxPlaneY = 2000
+plane     = makePlane (-2) 2 maxPlaneX (-2) 2 maxPlaneY
+slplane   = slice (2001) plane 
+-- ^ +1 because each row has 0.0 as a point
+
+boolPlane  = calculateBool    julia slplane
+colorPlane = calculateColored julia slplane
+
+imgDataBool = buildImage boolPlane
+
 main = do
-  let image = makeRedImage 440 440
-  let ret   = buildImage boolPlane
-  let out   = setData image ret
+  let image = makeRedImage 2000 2000
+--  let out   = setData image imgDataBool
+  let out   = setData image colorPlane
   printf $ outputImage out
 
