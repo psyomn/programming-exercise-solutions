@@ -16,4 +16,3 @@ main = do
   let edited  = setData image dat
   printf $ outputImage edited
 
-

@@ -11,3 +11,6 @@ opt: clean
 s:
 	./main > out.ppm;
 	feh out.ppm
+
+doc:
+	doxygen 

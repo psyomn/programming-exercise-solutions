@@ -14,13 +14,13 @@ PPMImage
 , getHeader, getWidth, getHeight, getData
 ) where
 
--- A pixel is a tuple of RGB
+-- | A pixel is a tuple of RGB
 data Pixel a = Pixel a a a deriving Show
 
--- PPMImage : header, width, height, data
+-- | PPMImage : header, width, height, data
 data PPMImage = PPMImage String Int Int [[Pixel Int]]
 
--- Header stuff
+-- | Header stuff
 ppmMagicNumber = "P3"
 maxColor = 255
 minColor = 0
@@ -59,10 +59,10 @@ makePixel :: Int -> Int -> Int -> Pixel Int
 makePixel r g b = Pixel (boundsCheck r) (boundsCheck g) (boundsCheck b)
 
 --
--- Image Creation routines
+-- | Image Creation routines
 --
 
--- Aux function, not to be used
+-- | Aux function, not to be used
 makeRow :: Int -> Pixel t -> [Pixel t]
 makeRow 0  _  = []
 makeRow it px = px : makeRow (it - 1) px
@@ -81,7 +81,7 @@ makeGreenImage x y = makeImage greenPixel x y
 makeBlueImage  x y = makeImage bluePixel  x y
 makeRedImage   x y = makeImage redPixel   x y
 
--- Pixel 0 1 2 -> "0 1 2"
+-- | Pixel 0 1 2 -> "0 1 2"
 pixelString :: Pixel Int -> String
 pixelString pixel = 
      (show $ redOf pixel) ++ " "
