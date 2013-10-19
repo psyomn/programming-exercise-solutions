@@ -21,6 +21,16 @@ numtuples = [
 
 revtuples = reverse numtuples
 
+nextSmallest :: Int -> (Int, String)
+nextSmallest num = nextSmallest' num revtuples
+
+nextSmallest' :: Int -> [(Int, String)] -> (Int, String)
+nextSmallest' _       [] = error "next smallest not found"
+nextSmallest' num (t:ts) =
+  case num > fst t of 
+    False -> nextSmallest' num ts
+    True  -> t
+
 lookup :: Int -> (Int, String)
 lookup num = lookup' num numtuples
 
@@ -40,15 +50,19 @@ num2Eng value sub acc =
     False -> acc
 
 wholeNum2Eng :: Int -> String
+wholeNum2Eng 0   = ""
 wholeNum2Eng num =
-  let tup   = last numtuples 
+  let tup   = nextSmallest num
       times = num2Eng num (fst tup) 0
       name  = snd tup
       ndiff = num - (times * (fst tup))
-  in show times ++ " " ++ name ++
+  in snd(Main.lookup times) ++ " " ++ name ++
      case ndiff > 0 of
        True -> wholeNum2Eng ndiff
        False -> ""
 
 main = do
-  print $ wholeNum2Eng 5013020110
+  numStr <- getLine
+  let num = read numStr :: Int
+  putStrLn $ wholeNum2Eng num
+
