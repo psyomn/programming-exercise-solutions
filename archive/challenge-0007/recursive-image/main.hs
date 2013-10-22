@@ -31,8 +31,7 @@ colorPlane = calculateColored julia slplane
 imgDataBool = buildImage boolPlane
 
 main = do
-  let image = makeRedImage 2000 2000
---  let out   = setData image imgDataBool
+  let image = makeRedImage 2001 2000
   let out   = setData image colorPlane
   printf $ outputImage out
 

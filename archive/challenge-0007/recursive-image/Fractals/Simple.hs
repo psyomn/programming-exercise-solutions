@@ -24,7 +24,13 @@ maxIterations = 255
 -- |The function allows setting a C of whatever value, but for the sake of 
 --   simplicity, we're going to use 0 
 julia :: CxDouble -> CxDouble
-julia z = z * z + ( (-0.835) :+ (-0.232) )
+-- julia z = z * z + ( (-0.835) :+ (-0.232) )
+-- julia z = z * z + ( (-0.4) :+ (-0.6) )
+-- julia z = z * z + ( (-0.8) :+ (0.156) )
+-- julia z = z * z + ( (-0.70176) :+ (-0.3842) )
+-- julia z = z * z + ( (-0.835) :+ (-0.2321) )
+julia z = z * z + ( (-0.51) :+ (0.5315) )
+
 
 -- | Check if the given point, after two iterations of a fractal function will
 --   be greater than the radius 2 (there was a theory somewhere that I read
@@ -80,10 +86,12 @@ calculateBool f (x:xs) = map (toInfinity f) x : calculateBool f xs
 -- | Make a colored fractal
 calculateColored :: (CxDouble -> CxDouble) -> [[CxDouble]] -> [[Pixel Int]]
 calculateColored _     [] = []
-calculateColored f (x:xs) = map (funcIterationsPixel f) x : calculateColored f xs
+calculateColored f (x:xs) = 
+  map (funcIterationsPixel f) x : calculateColored f xs
 
 funcIterationsPixel :: (CxDouble -> CxDouble) -> CxDouble -> Pixel Int
-funcIterationsPixel f ipoint = makePixel 0 (funcIterations f ipoint) (funcIterations f ipoint)
+funcIterationsPixel f ipoint = 
+  makePixel 0 (funcIterations f ipoint) (funcIterations f ipoint)
 
 funcIterations :: (CxDouble -> CxDouble) -> CxDouble -> Int
 funcIterations f ipoint = funcIterationsBack f ipoint 0
@@ -94,9 +102,9 @@ funcIterations f ipoint = funcIterationsBack f ipoint 0
 --   ipoint is the imaginary point
 --   acc    is the accumulator
 funcIterationsBack f ipoint acc =
-  case euclidean(f ipoint) > 2 && acc < maxIterations of
-    True  -> acc
-    False -> funcIterationsBack f (f ipoint) (acc + 1)
+  case euclidean(f ipoint) < 2 && acc < maxIterations of
+    True  -> funcIterationsBack f (f ipoint) (acc + 1)
+    False -> acc
 
 -- | return a pixel color depending on the magnitude of displacement
 colorByMagnitude :: Double -> Pixel Int

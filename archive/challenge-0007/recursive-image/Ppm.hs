@@ -100,7 +100,8 @@ imageString (PPMImage _ _ _ dat) = imageStringBackend dat
 
 imageStringBackend :: [[Pixel Int]] -> String
 imageStringBackend [] = ""
-imageStringBackend (row:rows) = (outputRow row) ++ "\n" ++ imageStringBackend rows
+imageStringBackend (row:rows) = 
+  (outputRow row) ++ "\n" ++ imageStringBackend rows
 
 outputImage :: PPMImage -> String
 outputImage img = 
