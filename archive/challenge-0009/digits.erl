@@ -20,7 +20,7 @@ make(List) when is_list(List) ->
 %% @doc mapping shorthand to convert lists to int lists
 make_int([]) -> [];
 make_int(List) -> 
-  lists:map(fun(X) -> digits:make_number(X) end, List).
+  lists:map(fun(X) -> make_number(X) end, List).
 
 make_number(X) -> 
   {HeadInt, _} = string:to_integer(X),
