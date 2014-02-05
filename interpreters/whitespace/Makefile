@@ -1,7 +1,7 @@
 GCC=gcc
 LD=$(GCC)
 CFLAGS=-Wall
-SRC:= stack.c whitespace.c
+SRC:= stack.c wsvm.c whitespace.c
 OBJ:= $(SRC:.c=.o)
 TARGET=whitespacei
 

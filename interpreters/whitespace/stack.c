@@ -22,7 +22,7 @@ add_node(node_t * _n, stack_t * _s) {
 }
 
 void 
-add_node_with_value(stack_t * _s, int64_t _v) {
+stack_add_node_with_value(stack_t * _s, int64_t _v) {
   node_t * n = create_node(); 
   n->data = _v;
   add_node(n, _s);
@@ -42,7 +42,7 @@ stack_size(stack_t * _s) {
 }
 
 void
-print_stack(stack_t * _s) {
+stack_print(stack_t * _s) {
   node_t * n = _s->head;
 
   while(n) {
@@ -53,7 +53,7 @@ print_stack(stack_t * _s) {
 }
 
 node_t * 
-pop(stack_t * _s) {
+stack_pop(stack_t * _s) {
   node_t * n = _s->head;
 
   if (_s->head)
