@@ -22,8 +22,6 @@ string printMap(map<char,int>& _m) {
 }
 
 bool sameMapContents(map<char,int>& _m1, map<char,int>& _m2) {
-  if (_m1.size() != _m2.size()) return false;
-
   map<char,int>::iterator it = _m1.begin();
 
   /* Check actual contents */
@@ -70,6 +68,8 @@ int main(int argc, char * argv[]) {
     cout << crw << ": " << printMap(current) << endl;
 
     for (string& s : words) {
+			if (s.size() != crw.size()) continue;
+
       checking.clear(); 
       
       for (size_t x = 0; x < crw.length(); ++x) {
