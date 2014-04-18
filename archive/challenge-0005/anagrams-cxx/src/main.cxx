@@ -68,7 +68,7 @@ int main(int argc, char * argv[]) {
     cout << crw << ": " << printMap(current) << endl;
 
     for (string& s : words) {
-			if (s.size() != crw.size()) continue;
+      if (s.size() != crw.size()) continue;
 
       checking.clear(); 
       
