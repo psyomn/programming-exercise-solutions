@@ -1,0 +1,3 @@
+To compile run:
+
+  gnatmake -Parrr.gpr -p -Xmode=release
