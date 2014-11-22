@@ -5,9 +5,9 @@
 
 %% @doc don't care about input
 main(_) ->
-  Max      = round(math:sqrt(1000)),
+  Max      = 100,
   Unwanted = usort(make_sequence(Max)),
-  Wanted   = seq(1,1000) -- Unwanted,
+  Wanted   = seq(1,Max) -- Unwanted,
   Final    = make_odd_primes(Wanted),
   io:format("~p~n", [Final]).
 
