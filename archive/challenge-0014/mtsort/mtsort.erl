@@ -12,6 +12,8 @@ main(NumThreads) ->
   Chunked     = n_chunks(Data, SanitizedArgs),
   MasterPID   = spawn(mtsort, master_process, [SanitizedArgs, []]),
   Workers     = make_workers(SanitizedArgs),
+  print_workers(Workers),
+
   Workload    = lists:zip(Workers, Chunked),
   lists:map(fun(X) -> {W, C} = X, W ! {C, MasterPID} end, Workload).
 
@@ -42,6 +44,10 @@ make_workers(Num) when Num =:= 0 -> [];
 make_workers(Num) ->
   [spawn(mtsort, worker, []) | make_workers(Num - 1)].
 
+print_workers(Workers) ->
+  io:format("Workers: ~n"),
+  lists:map(fun(X) -> io:format(" * ~p~n", [X]) end, Workers).
+
 % @doc Sanitize input from command line. Min threads, 1.
 sanitize(Args) when erlang:length(Args) =:= 0 -> 1;
 sanitize(Args) ->
@@ -52,7 +58,6 @@ sanitize(Args) ->
 %% @doc basic worker process that sorts a list (in our case a segment of a
 %% list).
 worker() ->
-  io:format("init worker. ~n"),
   receive
     {List, Other} ->
       Sorted = lists:sort(List),
@@ -63,9 +68,7 @@ worker() ->
 n_chunks([],_) -> [];
 n_chunks(L, 1) -> [L]; %% NB: list in list
 n_chunks(L, NumPartitions) ->
-  io:format("~p~n", [NumPartitions]),
   ChunkSize = ceiling(erlang:length(L) / NumPartitions),
-  io:format("~p~n", [ChunkSize]),
   n_chunks_by_size(L, ChunkSize).
 
 n_chunks_by_size(L, ChunkSize) when length(L) =< ChunkSize -> [L];
