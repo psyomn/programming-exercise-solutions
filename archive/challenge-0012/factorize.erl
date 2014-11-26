@@ -7,7 +7,7 @@ print_usage() ->
 
 sanitize(ARGS) ->
   [H|_] = ARGS,
-  {N, _} = string:to_integer(H),
+  {N,_} = string:to_integer(H),
    N.
 
 main([])   -> print_usage();
