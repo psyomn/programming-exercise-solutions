@@ -27,13 +27,20 @@ fn main() {
       _            => "wrong month".to_string(),
   };
 
-  let month_exists: bool = cal.iter().fold(false, |acc, e| acc || cmp_cal(e, month));
+  let month_exists: bool = cal.iter().fold(false, |acc, e| acc || cmp_cal(e, &month));
 
   println!("{}", month);
+
+  if month_exists {
+    println!("That month exists!");
+  }
+  else {
+    println!("That month does not exist!");
+  }
 }
 
-fn cmp_cal(tuple: &(&str, uint), month: String) -> bool {
+fn cmp_cal(tuple: &(&str, uint), month: &String) -> bool {
   let &(m, d) = tuple;
-  return m.to_string() == month;
+  return m.to_string() == *month;
 }
 
