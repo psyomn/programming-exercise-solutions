@@ -4,7 +4,7 @@ fn main() {
   let mut args: Vec<String> = os::args();
   let cal:  [(&str, uint), ..12] = [
       ("january"  ,  31), ("february" ,  28),
-      ("march"    ,  29), ("april"    ,  30),
+      ("march"    ,  31), ("april"    ,  30),
       ("may"      ,  31), ("june"     ,  30),
       ("july"     ,  31), ("august"   ,  31),
       ("september",  30), ("october"  ,  31),
@@ -22,6 +22,13 @@ fn main() {
       _            => "wrong month".to_string(),
   };
 
+  let day_of_month_opt : Option<uint> = from_str(day_of_month.as_slice());
+
+  let day_of_month_i = match day_of_month_opt {
+      Some(uint)   => uint,
+      _            => 0u,
+  };
+
   let month : String = match args.pop() {
       Some(String) => String,
       _            => "wrong month".to_string(),
@@ -31,12 +38,22 @@ fn main() {
 
   println!("{}", month);
 
-  if month_exists {
-    println!("That month exists!");
+  if !month_exists {
+      println!("{} is not a proper month", month);
+      return;
   }
-  else {
-    println!("That month does not exist!");
+
+  /* Finally count the days; we add the day of month, and add previous months maxes */
+  let mut total_days: uint = day_of_month_i;
+
+  for m in cal.iter() {
+      let &(derp, acc) = m;
+      if derp.to_string() == month { break }
+      total_days += acc;
   }
+
+  println!("Day of month for <{}> <{}> is: {}", month, day_of_month, total_days);
+
 }
 
 fn cmp_cal(tuple: &(&str, uint), month: &String) -> bool {
