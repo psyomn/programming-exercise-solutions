@@ -36,8 +36,6 @@ fn main() {
 
   let month_exists: bool = cal.iter().fold(false, |acc, e| acc || cmp_cal(e, &month));
 
-  println!("{}", month);
-
   if !month_exists {
       println!("{} is not a proper month", month);
       return;
@@ -45,14 +43,24 @@ fn main() {
 
   /* Finally count the days; we add the day of month, and add previous months maxes */
   let mut total_days: uint = day_of_month_i;
+  let mut last_acc:   uint = 0;
 
   for m in cal.iter() {
       let &(derp, acc) = m;
+      last_acc = acc;
+
       if derp.to_string() == month { break }
       total_days += acc;
   }
 
-  println!("Day of month for <{}> <{}> is: {}", month, day_of_month, total_days);
+  /* Is the day the user entered in the month range? */
+  if !(day_of_month_i <= last_acc && day_of_month_i > 0) {
+      println!("Bad input: {}; max day of {} is {}",
+               day_of_month, month, last_acc);
+      return;
+  }
+
+  println!("Day of year for <{}> <{}> is: {}", month, day_of_month, total_days);
 
 }
 
