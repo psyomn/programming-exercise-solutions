@@ -1,6 +1,7 @@
 mod arena;
 mod player;
 
+
 fn main() {
     let mut p1 = player::Player::new("jonny".to_string());
     let mut p2 = player::Player::new("joe".to_string());
