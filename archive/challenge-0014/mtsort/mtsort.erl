@@ -12,13 +12,10 @@ main(NumThreads) ->
 
   Data = make_random_list(),
 
-  Chunked     = nice_chunk(SanitizedArgs, Data),
-  MasterPID   = spawn(?MODULE, master_process, [SanitizedArgs, []]),
-  Workers     = make_workers(SanitizedArgs),
-  print_workers(Workers),
-
-  Workload    = lists:zip(Workers, Chunked),
-  lists:map(fun(X) -> {W, C} = X, W ! {C, MasterPID} end, Workload).
+  Chunked   = nice_chunk(SanitizedArgs, Data),
+  Workers   = make_workers(SanitizedArgs),
+  MasterPID = spawn(?MODULE, master_process, [SanitizedArgs, []]),
+  merge(Workers, Chunked, MasterPID).
 
 master_process(0,   Acc) ->
   io:format("Final answer is: ~p~n", [Acc]);
@@ -29,9 +26,10 @@ master_process(RespCount, Acc) ->
       master_process(RespCount - 1, NewAcc)
   end.
 
-merge() -> todo.
-
-process_each_chunk(ListChunks, WorkerPIDs) -> todo.
+%% @doc recursively merge, and assign workers to sort
+merge(WorkerPIDs, Chunks, MasterPID) ->
+  Workload = lists:zip(WorkerPIDs, Chunks),
+  lists:map(fun(X) -> {W, C} = X, W ! {C, MasterPID} end, Workload).
 
 %% @doc random number generation for testing with algorithm
 make_random_list()   -> make_random_list(?NUMRANGE).
