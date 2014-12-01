@@ -8,7 +8,7 @@ pub struct Arena<'a, 'b> {
 
 impl<'a, 'b> Arena <'a, 'b>  {
 
-    pub fn new(p1: &'a mut player::Player, p2: &'b mut player::Player) -> Arena<'a, 'b> {
+    pub fn new(p1: &'a mut player::Player, p2: &'b mut player::Player) -> Arena {
         Arena { player_one: p1, player_two: p2 }
     }
 
