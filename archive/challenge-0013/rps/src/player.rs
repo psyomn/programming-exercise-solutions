@@ -36,6 +36,10 @@ impl Player {
     pub fn draw(&self) -> GameChoice {
         let mut r = rand::task_rng();
 
+        if self.weight == 1 && (r.gen::<int>() % 100 <= 80) {
+            return GameChoice::Rock;
+        }
+
         match r.gen::<int>() % 3 {
             0 => GameChoice::Rock,
             1 => GameChoice::Paper,
