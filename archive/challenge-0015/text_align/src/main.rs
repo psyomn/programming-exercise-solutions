@@ -27,7 +27,7 @@ fn pad_line(line: &Vec<u8>, max: u64) {
     let diff = max - line_size;
 
     if diff > 0 {
-        for x in range(0, diff) {
+        for _ in range(0, diff) {
             print!(" ");
         }
     }
