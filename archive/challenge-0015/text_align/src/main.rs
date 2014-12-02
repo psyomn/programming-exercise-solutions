@@ -27,12 +27,15 @@ fn pad_line(line: &Vec<u8>, max: u64) {
     let diff = max - line_size;
 
     if diff > 0 {
-        for x in range(1, diff) {
+        for x in range(0, diff) {
             print!(" ");
         }
     }
 
-    print!("{}", line);
+    // Convert back to char (NOTE: I'm a newb, this might be wrong)
+    let strline : String = line.iter().map(|&x| x as char).collect();
+
+    println!("{}", strline);
 }
 
 fn main() {
