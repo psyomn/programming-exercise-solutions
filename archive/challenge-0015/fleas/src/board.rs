@@ -1,6 +1,5 @@
 use std::rand;
 use std::rand::Rng;
-use std::collections::HashMap;
 
 pub use board::Direction::{ N, S, E, W };
 #[deriving(PartialEq, Eq)]
@@ -41,6 +40,19 @@ impl Board {
         Board{tiles: [[1, ..30], ..30], step: 0}
     }
 
+    /// Count how many cells are equal to zero
+    pub fn count_zeros(&self) -> uint {
+        let mut counter = 0;
+
+        for y in self.tiles.iter() {
+            for x in y.iter() {
+                counter += if *x == 0 { 1 } else { 0 };
+            }
+        }
+
+        counter
+    }
+
     /// Model the bell ringing
     pub fn step(&mut self) {
         let mut height_rng = range(0i, self.tiles.len() as int);
@@ -48,8 +60,8 @@ impl Board {
 
         self.step += 1;
 
-        for y in height_rng {
-            for x in row_rng {
+        for _ in height_rng {
+            for _ in row_rng {
                 self.displace_coordinate();
             }
         }
@@ -59,7 +71,6 @@ impl Board {
     fn displace_coordinate(&mut self) {
         let row_max          = self.row_max() - 1;
         let height_max       = self.height_max() - 1;
-        let mut r            = rand::task_rng();
         let mut height_rng   = range(0u, self.tiles.len() );
         let mut r_height_rng = height_rng.clone();
         let mut row_rng      = range(0u, self.tiles[0].len() );
