@@ -20,7 +20,6 @@ main([]) ->
   io:format("Usage:~n  stars.erl <normal|rev|ralign> <number>~n");
 main([OrderOption,CountString|_]) ->
   {CountNum, _Rest} = string:to_integer(CountString),
-  io:format("[~p] [~p] [~p]~n", [CountNum, OrderOption, CountString]),
   case OrderOption of
     "normal" -> star(CountNum);
     "rev" -> starrev(CountNum);
@@ -28,11 +27,11 @@ main([OrderOption,CountString|_]) ->
   end.
 
 star(X) ->
-  star_backend(0, X).
+  star_backend(1, X).
 
 starrev(1) ->
   draw_row(1);
-starrev(X) -> 
+starrev(X) ->
   draw_row(X),
   starrev(X - 1).
 
@@ -51,3 +50,4 @@ draw_row(1) ->
 draw_row(X) ->
   io:format("@"),
   draw_row(X - 1).
+
