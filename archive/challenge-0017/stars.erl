@@ -23,7 +23,7 @@ main([OrderOption,CountString|_]) ->
   case OrderOption of
     "normal" -> star(CountNum);
     "rev" -> starrev(CountNum);
-    "ralign" -> io:format("Todo")
+    "ralign" -> starralign(CountNum)
   end.
 
 star(X) ->
@@ -44,10 +44,28 @@ star_backend(From, To) ->
   star_backend(From + 1, To).
 
 draw_row(0) ->
-  throw(dont_use_zero);
+  skip;
 draw_row(1) ->
   io:format("@~n");
 draw_row(X) ->
   io:format("@"),
   draw_row(X - 1).
+
+draw_blank(0) ->
+  skip;
+draw_blank(1) ->
+  io:format(" ");
+draw_blank(X) ->
+  io:format(" "),
+  draw_blank(X - 1).
+
+starralign(X) ->
+  starralign_back(X, X).
+
+starralign_back(0, _) ->
+  skip;
+starralign_back(X, Max) ->
+  draw_blank(Max - X),
+  draw_row(X),
+  starralign_back(X - 1, Max).
 
