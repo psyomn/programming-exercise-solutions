@@ -1,6 +1,6 @@
 -module(tictac).
 -author("lethaljellybean@gmail.com").
--export([main/1]).
+-compile(export_all).
 
 -include_lib("eunit/include/eunit.hrl").
 
@@ -49,9 +49,9 @@ has_winning_rows(Board) ->
   R1 = get_array_elements(Board, [0,1,2]),
   R2 = get_array_elements(Board, [3,4,5]),
   R3 = get_array_elements(Board, [6,7,8]),
-  WR1 = all_same(R1),
-  WR2 = all_same(R2),
-  WR3 = all_same(R3),
+  WR1 = all_same(R1) andalso hd(R1) /= b,
+  WR2 = all_same(R2) andalso hd(R1) /= b,
+  WR3 = all_same(R3) andalso hd(R1) /= b,
   case WR1 of
     true -> {true, 0, hd(R1)};
     false ->
@@ -60,19 +60,52 @@ has_winning_rows(Board) ->
         false ->
           case WR3 of
             true -> {true, 2, hd(R3)};
-            false -> false
+            false -> {false, -1, none}
           end
       end
   end.
 
-has_winning_columns(Board) -> true.
-has_winning_diagonals(Board) -> true.
+%% @doc checks to see if there are winning columns in the tictac board
+has_winning_columns(Board) ->
+  C1 = get_array_elements(Board, [0,3,6]),
+  C2 = get_array_elements(Board, [1,4,7]),
+  C3 = get_array_elements(Board, [2,5,8]),
+  [WC1, WC2, WC3] =
+  lists:map(fun(X) -> tictac:all_same(X) andalso hd(X) /= b end, [C1, C2, C3]),
+  case WC1 of
+    true -> {true, 0, hd(C1)};
+    false ->
+      case WC2 of
+        true -> {true, 1, hd(C2)};
+        false ->
+          case WC3 of
+            true -> {true, 2, hd(C3)};
+            false -> {false, -1, none}
+          end
+      end
+  end.
 
+has_winning_diagonals(Board) ->
+  D1 = get_array_elements(Board, [0,4,8]),
+  D2 = get_array_elements(Board, [2,4,6]),
+  [WD1, WD2] =
+  lists:map(fun(X) -> tictac:all_same(X) andalso hd(X) /= b end, [D1, D2]),
+  case WD1 of
+    true -> {true, 0, hd(D1)};
+    false ->
+      case WD2 of
+        true -> {true, 1, hd(D2)};
+        false -> {false, -1, none}
+      end
+  end.
+
+%% @doc are all the elements equal to each other in a list?
 all_same(List) ->
   [H|_] = List,
   Compare = lists:map(fun(X) -> X == H end, List),
   lists:foldl(fun(X,Sum) -> Sum == X end, true, Compare).
 
+%% @doc give an array, and a list of indices, and return those elements.
 get_array_elements(Array, IndexList) ->
   get_array_elements_back(Array, IndexList, []).
 
@@ -97,10 +130,51 @@ get_array_elements_test() ->
   ?assert([b,b,b] == get_array_elements(A2, [0,1,2])).
 
 has_winning_rows_test() ->
-  Board = array:from_list([x,x,x,b,o,b,b,b,b]),
-  Board2 = array:from_list([b,b,b,x,x,x,b,b,b]),
-  Board3 = array:from_list([b,b,b,b,b,b,o,o,o]),
-  has_winning_rows(Board),
-  has_winning_rows(Board2),
-  has_winning_rows(Board3).
+  Board = array:from_list([x,x,x,
+                           b,o,b,
+                           b,b,b]),
+
+  Board2 = array:from_list([b,b,b,
+                            x,x,x,
+                            b,b,b]),
+
+  Board3 = array:from_list([b,b,b,
+                            b,b,b,
+                            o,o,o]),
+
+  Board4 = array:from_list([b,b,b,
+                            b,b,b,
+                            b,b,b]),
+
+  ?assert({true,0,x} == has_winning_rows(Board)),
+
+  {DidWin, RowNum, Winner} = has_winning_rows(Board2),
+  %?assert({true,1,x} == has_winning_rows(Board2)),
+  ?assert(DidWin == true),
+  ?assert(RowNum == 1),
+  ?assert(Winner == x),
+
+  ?assert({true,2,o} == has_winning_rows(Board3)),
+  ?assert(false == has_winning_rows(Board4)).
+
+has_winning_columns_test() ->
+  Board = array:from_list([x,b,b,
+                           x,o,b,
+                           x,b,b]),
+
+  Board2 = array:from_list([b,x,b,
+                            x,x,x,
+                            b,x,b]),
+
+  Board3 = array:from_list([b,b,o,
+                            b,b,o,
+                            o,o,o]),
+
+  Board4 = array:from_list([b,b,b,
+                            b,x,b,
+                            x,b,b]),
+  ?assert({true,0,x} == has_winning_columns(Board)),
+  ?assert({true,1,x} == has_winning_columns(Board2)),
+  ?assert({true,2,o} == has_winning_columns(Board3)),
+  ?assert({false,-1,none} == has_winning_columns(Board4)).
 
