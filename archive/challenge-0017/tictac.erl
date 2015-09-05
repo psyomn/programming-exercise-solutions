@@ -7,8 +7,9 @@
 main(_) ->
   Board = make_board(),
   BlankBoard = blankify_board(Board),
-  XBoard = place(1,1,BlankBoard,x),
-  print_board(XBoard).
+  XBoard = place(2,1,place(0,1,place(1,1,BlankBoard,x),x),x),
+  print_board(XBoard),
+  has_winning_rows(XBoard).
 
 make_board() ->
   array:new(9).
@@ -50,8 +51,10 @@ has_winning_rows(Board) ->
   R2 = get_array_elements(Board, [3,4,5]),
   R3 = get_array_elements(Board, [6,7,8]),
   WR1 = all_same(R1) andalso hd(R1) /= b,
-  WR2 = all_same(R2) andalso hd(R1) /= b,
-  WR3 = all_same(R3) andalso hd(R1) /= b,
+  WR2 = all_same(R2) andalso hd(R2) /= b,
+  WR3 = all_same(R3) andalso hd(R3) /= b,
+  io:format("~p ~p ~p~n", [R1, R2, R3]),
+  io:format("~p ~p ~p~n", [WR1, WR2, WR3]),
   case WR1 of
     true -> {true, 0, hd(R1)};
     false ->
@@ -70,8 +73,12 @@ has_winning_columns(Board) ->
   C1 = get_array_elements(Board, [0,3,6]),
   C2 = get_array_elements(Board, [1,4,7]),
   C3 = get_array_elements(Board, [2,5,8]),
-  [WC1, WC2, WC3] =
-  lists:map(fun(X) -> tictac:all_same(X) andalso hd(X) /= b end, [C1, C2, C3]),
+  % [WC1, WC2, WC3] =
+  % lists:map(fun(X) -> tictac:all_same(X) andalso hd(X) /= b end, [C1, C2, C3]),
+  WC1 = tictac:all_same(C1) andalso hd(C1) /= b,
+  WC2 = tictac:all_same(C2) andalso hd(C2) /= b,
+  WC3 = tictac:all_same(C3) andalso hd(C3) /= b,
+  io:format("wc: ~p -> ~p, ~p -> ~p, ~p -> ~p ~n", [C1, WC1, C2, WC2, C3, WC3]),
   case WC1 of
     true -> {true, 0, hd(C1)};
     false ->
@@ -102,8 +109,8 @@ has_winning_diagonals(Board) ->
 %% @doc are all the elements equal to each other in a list?
 all_same(List) ->
   [H|_] = List,
-  Compare = lists:map(fun(X) -> X == H end, List),
-  lists:foldl(fun(X,Sum) -> Sum == X end, true, Compare).
+  Compare = lists:map(fun(X) -> X =:= H end, List),
+  lists:all(fun(X) -> X =:= true end, Compare).
 
 %% @doc give an array, and a list of indices, and return those elements.
 get_array_elements(Array, IndexList) ->
@@ -117,10 +124,10 @@ get_array_elements_back(Array, IndexList, Acc) ->
 %%% Tests
 
 all_same_test() ->
-  ?assert(
-    true  == all_same([1,1,1,1,1]) andalso
-    true  == all_same([b,b,b,b,b]) andalso
-    false == all_same([x,x,o])).
+  ?assert(all_same([1,1,1,1,1])),
+  ?assert(all_same([b,b,b,b,b])),
+  ?assert(false == all_same([x,x,o])),
+  ?assert(false == all_same([x,b,b])).
 
 get_array_elements_test() ->
   Array = array:new(5),
@@ -147,18 +154,12 @@ has_winning_rows_test() ->
                             b,b,b]),
 
   ?assert({true,0,x} == has_winning_rows(Board)),
-
-  {DidWin, RowNum, Winner} = has_winning_rows(Board2),
-  %?assert({true,1,x} == has_winning_rows(Board2)),
-  ?assert(DidWin == true),
-  ?assert(RowNum == 1),
-  ?assert(Winner == x),
-
+  ?assert({true,1,x} == has_winning_rows(Board2)),
   ?assert({true,2,o} == has_winning_rows(Board3)),
-  ?assert(false == has_winning_rows(Board4)).
+  ?assert({false,-1,none} == has_winning_rows(Board4)).
 
 has_winning_columns_test() ->
-  Board = array:from_list([x,b,b,
+  Board = array:from_list([x,x,b,
                            x,o,b,
                            x,b,b]),
 
@@ -173,8 +174,26 @@ has_winning_columns_test() ->
   Board4 = array:from_list([b,b,b,
                             b,x,b,
                             x,b,b]),
+
+  ?assert({false,-1,none} == has_winning_columns(Board4)),
   ?assert({true,0,x} == has_winning_columns(Board)),
   ?assert({true,1,x} == has_winning_columns(Board2)),
-  ?assert({true,2,o} == has_winning_columns(Board3)),
-  ?assert({false,-1,none} == has_winning_columns(Board4)).
+  ?assert({true,2,o} == has_winning_columns(Board3)).
+
+has_winning_diagonals_test() ->
+  Board = array:from_list([x,b,b,
+                           b,x,b,
+                           b,b,x]),
+
+  Board2 = array:from_list([b,x,o,
+                            x,o,x,
+                            o,x,b]),
+
+  Board3 = array:from_list([b,x,b,
+                            x,x,x,
+                            b,x,b]),
+
+  ?assert({true,0,x} == has_winning_diagonals(Board)),
+  ?assert({true,1,o} == has_winning_diagonals(Board2)),
+  ?assert({false,-1,none} == has_winning_diagonals(Board3)).
 
