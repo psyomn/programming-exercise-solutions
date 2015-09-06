@@ -5,14 +5,24 @@
 -include_lib("eunit/include/eunit.hrl").
 
 main(_) ->
-  Board = make_board(),
+  Board = ?MODULE:make_board(),
   BlankBoard = blankify_board(Board),
-  XBoard = place(2,1,place(0,1,place(1,1,BlankBoard,x),x),x),
-  print_board(XBoard),
-  has_winning_rows(XBoard).
+  tictac:step(BlankBoard, ongoing).
 
-make_board() ->
-  array:new(9).
+%% @doc main game loop
+step(_,           x) -> io:format("Congratulations! You have won~n");
+step(_,           o) -> io:format("You have lost the game~n");
+step(Board, GameWon) ->
+  print_board(Board),
+  {CoordX, _} = string:to_integer(io:get_line("X: ")),
+  {CoordY, _} = string:to_integer(io:get_line("Y: ")),
+  NewBoard = place(CoordX, CoordY, Board, x),
+  case is_winning_state(NewBoard) of
+    {true, Who} -> step(NewBoard, Who);
+    false -> step(NewBoard, ongoing)
+  end.
+
+make_board() -> array:new(9).
 
 blankify_board(Board) ->
   Size = array:size(Board),
@@ -41,10 +51,20 @@ place(X, Y, Board, V) ->
 get_at(X, Y, Board) ->
   array:get(Y * 3 + X, Board).
 
+%% @doc check any winning combination
 is_winning_state(Board) ->
-  [has_winning_rows(Board),
-   has_winning_columns(Board),
-   has_winning_diagonals(Board)].
+  case has_winning_rows(Board) of
+    {true, _, Who} -> {true,Who};
+    {false, _, _}  ->
+      case has_winning_columns(Board) of
+        {true, _, Who} -> {true,Who};
+        {false, _, _}  ->
+          case has_winning_diagonals(Board) of
+            {true,_,Who} -> {true, Who};
+            {false, _, _}  -> false
+          end
+      end
+  end.
 
 has_winning_rows(Board) ->
   R1 = get_array_elements(Board, [0,1,2]),
@@ -53,8 +73,6 @@ has_winning_rows(Board) ->
   WR1 = all_same(R1) andalso hd(R1) /= b,
   WR2 = all_same(R2) andalso hd(R2) /= b,
   WR3 = all_same(R3) andalso hd(R3) /= b,
-  io:format("~p ~p ~p~n", [R1, R2, R3]),
-  io:format("~p ~p ~p~n", [WR1, WR2, WR3]),
   case WR1 of
     true -> {true, 0, hd(R1)};
     false ->
@@ -74,7 +92,6 @@ has_winning_columns(Board) ->
   C2 = get_array_elements(Board, [1,4,7]),
   C3 = get_array_elements(Board, [2,5,8]),
   [WC1, WC2, WC3] = lists:map(fun(X) -> tictac:all_same(X) andalso hd(X) /= b end, [C1, C2, C3]),
-  io:format("wc: ~p -> ~p, ~p -> ~p, ~p -> ~p ~n", [C1, WC1, C2, WC2, C3, WC3]),
   case WC1 of
     true -> {true, 0, hd(C1)};
     false ->
