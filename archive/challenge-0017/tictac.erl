@@ -73,11 +73,7 @@ has_winning_columns(Board) ->
   C1 = get_array_elements(Board, [0,3,6]),
   C2 = get_array_elements(Board, [1,4,7]),
   C3 = get_array_elements(Board, [2,5,8]),
-  % [WC1, WC2, WC3] =
-  % lists:map(fun(X) -> tictac:all_same(X) andalso hd(X) /= b end, [C1, C2, C3]),
-  WC1 = tictac:all_same(C1) andalso hd(C1) /= b,
-  WC2 = tictac:all_same(C2) andalso hd(C2) /= b,
-  WC3 = tictac:all_same(C3) andalso hd(C3) /= b,
+  [WC1, WC2, WC3] = lists:map(fun(X) -> tictac:all_same(X) andalso hd(X) /= b end, [C1, C2, C3]),
   io:format("wc: ~p -> ~p, ~p -> ~p, ~p -> ~p ~n", [C1, WC1, C2, WC2, C3, WC3]),
   case WC1 of
     true -> {true, 0, hd(C1)};
