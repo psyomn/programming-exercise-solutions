@@ -134,6 +134,30 @@ get_array_elements_back(Array, IndexList, Acc) ->
   [H|T] = IndexList,
   get_array_elements_back(Array, T, [array:get(H, Array)|Acc]).
 
+%% @doc returns the coordinates of each blank space
+blank_coordinates(Board) ->
+  L = array:to_list(Board),
+  LSize = lists:seq(0,array:size(Board)-1),
+  Zipped = lists:zip(L, LSize),
+  OnlyBlanks = lists:filter(fun(X) -> {V,_} = X, V == b end, Zipped),
+  Coordinates = lists:map(fun(X) -> {_,C} = X, C end, OnlyBlanks),
+  Coordinates.
+
+%% @doc given a board, and coordinates of blanks, check where is best to
+%%   place the next 'o', and return a list of best options (coordinates).
+%%   This needs to do two things:
+%%     1. Check if by one placement, the game can be won
+%%     2. If not the above, which is the next best placement
+pretend_heuristic(Board, Coordinates) -> todo.
+
+coordinate_weights() ->
+  M = maps:from_list([
+      % Rush for corners
+      {0,3}, {2,3}, {6,3}, {8,3},
+      % Kind of prefer center
+      {4,2}]),
+  M.
+
 %%% Tests
 
 all_same_test() ->
@@ -209,4 +233,11 @@ has_winning_diagonals_test() ->
   ?assert({true,0,x} == has_winning_diagonals(Board)),
   ?assert({true,1,o} == has_winning_diagonals(Board2)),
   ?assert({false,-1,none} == has_winning_diagonals(Board3)).
+
+blank_coordinates_test() ->
+  Board = array:from_list([x,b,b,
+                           b,x,b,
+                           b,b,x]),
+  Result = blank_coordinates(Board),
+  ?assert([1,2,3,5,6,7] == Result).
 
