@@ -150,6 +150,33 @@ blank_coordinates(Board) ->
 %%     2. If not the above, which is the next best placement
 pretend_heuristic(Board, Coordinates) -> todo.
 
+best_blanks(Board) ->
+  BCoords = blank_coordinates(Board).
+
+%% @doc Player is the atom 'x' or 'o'. This checks which rows have two of those
+%%   atoms and a blank in the middle.
+two_of(Board, Player) ->
+  R1 = [0,1,2],
+  R2 = [3,4,5],
+  R3 = [6,7,8],
+  C1 = [0,3,6],
+  C2 = [1,4,7],
+  C3 = [2,5,8],
+  D1 = [0,4,8],
+  D2 = [2,4,6],
+  Rows = [R1,R2,R3],
+  Cols = [C1,C2,C3],
+  Dias = [D1,D2],
+  Occurences = lists:map(fun(X) -> {X, count_occurences(Player, X, Board)} end,
+                         Rows ++ Cols ++ Dias),
+  Occurences.
+
+count_occurences(Player, Triad, Board) ->
+  E = lists:filter(fun(X) -> X =:= Player end,
+                   get_array_elements(Board, Triad)),
+  Count = erlang:length(E),
+  Count.
+
 coordinate_weights() ->
   M = maps:from_list([
       % Rush for corners
@@ -241,3 +268,8 @@ blank_coordinates_test() ->
   Result = blank_coordinates(Board),
   ?assert([1,2,3,5,6,7] == Result).
 
+count_occurences_test() ->
+  Board = array:from_list([x,x,x,
+                           b,b,b,
+                           b,b,b]),
+  ?assert(3 == count_occurences(x, [0,1,2], Board)).
