@@ -155,6 +155,7 @@ best_blanks(Board) ->
 
 %% @doc Player is the atom 'x' or 'o'. This checks which rows have two of those
 %%   atoms and a blank in the middle.
+%%   Returns a list of triads (as lists) which have two insertions.
 two_of(Board, Player) ->
   R1 = [0,1,2],
   R2 = [3,4,5],
@@ -289,6 +290,37 @@ count_occurences_test() ->
   ?assert(3 == count_occurences(x, [0,1,2], Board)).
 
 two_of_test() ->
-  Board = array:from_list([x,b,x,
-                           b,b,b,
-                           x,b,x]).
+  Board1 = array:from_list([x,b,x,
+                            b,b,b,
+                            x,b,x]),
+  Ret1 = two_of(Board1, x),
+  Expected1 = [[0,1,2],[6,7,8],
+               [0,3,6],[2,5,8],
+               [0,4,8],[2,4,6]],
+
+  Board2 = array:from_list([x,b,x,
+                            b,b,b,
+                            b,b,b]),
+  Expected2 = [[0,1,2]],
+  Ret2 = two_of(Board2, x),
+
+  Board3 = array:from_list([o,b,b,
+                            b,b,b,
+                            b,b,o]),
+
+  BoardMixed = array:from_list([o,b,x,
+                                b,b,b,
+                                o,b,x]),
+  RetMixed = two_of(BoardMixed, o),
+  ExpectedMixed = [[0,3,6]],
+
+  Ret3 = two_of(Board3, o),
+  Expected3 = [[0,4,8]],
+
+  RetNoneFound = two_of(Board3, x),
+
+  ?assert(Ret1         == Expected1),
+  ?assert(Ret2         == Expected2),
+  ?assert(Ret3         == Expected3),
+  ?assert(RetNoneFound == []),
+  ?assert(RetMixed     == ExpectedMixed).
