@@ -10,16 +10,17 @@ main(_) ->
   tictac:step(BlankBoard, ongoing).
 
 %% @doc main game loop
-step(_,           x) -> io:format("Congratulations! You have won~n");
-step(_,           o) -> io:format("You have lost the game~n");
-step(Board, GameWon) ->
+step(_,     x) -> io:format("Congratulations! You have won~n");
+step(_,     o) -> io:format("You have lost the game~n");
+step(Board, _) ->
   print_board(Board),
   {CoordX, _} = string:to_integer(io:get_line("X: ")),
   {CoordY, _} = string:to_integer(io:get_line("Y: ")),
   NewBoard = place(CoordX, CoordY, Board, x),
-  case is_winning_state(NewBoard) of
-    {true, Who} -> step(NewBoard, Who);
-    false -> step(NewBoard, ongoing)
+  EnemyBoard = enemy_turn(NewBoard),
+  case is_winning_state(EnemyBoard) of
+    {true, Who} -> step(EnemyBoard, Who);
+    false -> step(EnemyBoard, ongoing)
   end.
 
 make_board() -> array:new(9).
@@ -154,7 +155,7 @@ enemy_turn(Board) ->
   case [] =:= TriadL of
     false ->
       [H|_] = TriadL,
-      [BlankCoord|_] = tictac:blank_coordinate_of_triad(H),
+      [BlankCoord|_] = blank_coordinate_of_triad(Board, H),
       NewBoard = place(BlankCoord, 0, Board, o),
       NewBoard;
 
@@ -204,9 +205,10 @@ two_of(Board, Player) ->
       Occurences),
   TriadsOcc2 =
     lists:map(
-      fun(X) -> {T,_} = X, T end, TwoOcc).
+      fun(X) -> {T,_} = X, T end, TwoOcc),
+  TriadsOcc2.
 
-%% TODO
+%% Given a triad [0,1,2], get the coordinates which are blank.
 blank_coordinate_of_triad(Board, Triad) ->
   E = get_array_elements(Board, Triad),
   EA = lists:zip(Triad, E),
