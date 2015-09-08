@@ -134,7 +134,7 @@ get_array_elements_back(Array, IndexList, Acc) ->
   [H|T] = IndexList,
   get_array_elements_back(Array, T, [array:get(H, Array)|Acc]).
 
-%% @doc returns the coordinates of each blank space
+%% @doc returns the coordinates of each blank space, eg: [1,2,3].
 blank_coordinates(Board) ->
   L = array:to_list(Board),
   LSize = lists:seq(0,array:size(Board)-1),
@@ -148,10 +148,36 @@ blank_coordinates(Board) ->
 %%   This needs to do two things:
 %%     1. Check if by one placement, the game can be won
 %%     2. If not the above, which is the next best placement
-pretend_heuristic(Board, Coordinates) -> todo.
+%%   Return a board with AI player's placement.
+enemy_turn(Board) ->
+  TriadL = two_of(Board, o),
+  case [] =:= TriadL of
+    false ->
+      [H|_] = TriadL,
+      [BlankCoord|_] = tictac:blank_coordinate_of_triad(H),
+      NewBoard = place(BlankCoord, 0, Board, o),
+      NewBoard;
+
+    true ->
+      BlankCoords = best_blanks(Board),
+      [Best|_] = BlankCoords,
+      NewBoard = place(Best, 0, Board, o),
+      NewBoard
+  end.
 
 best_blanks(Board) ->
-  BCoords = blank_coordinates(Board).
+  MapWeights = coordinate_weights(),
+  BCoords = blank_coordinates(Board),
+  WeightedCoords =
+    lists:map(fun(X) -> {X, maps:get(X, MapWeights)} end, BCoords),
+  Sorted =
+    lists:sort(
+      fun(A,B) -> {_,WA} = A,
+                  {_,WB} = B,
+                  WA > WB end, WeightedCoords),
+  FinalCoords =
+    lists:map(fun(X) -> {C,_} = X, C end, Sorted),
+  FinalCoords.
 
 %% @doc Player is the atom 'x' or 'o'. This checks which rows have two of those
 %%   atoms and a blank in the middle.
@@ -181,9 +207,14 @@ two_of(Board, Player) ->
       fun(X) -> {T,_} = X, T end, TwoOcc).
 
 %% TODO
-blank_coordinate_of_triad(Board, Triad, Player) ->
+blank_coordinate_of_triad(Board, Triad) ->
   E = get_array_elements(Board, Triad),
-  EA = lists:zip(Triad, E).
+  EA = lists:zip(Triad, E),
+  Blanks = lists:filter(
+    fun(X) -> {_,C} = X, C == b end,
+    EA),
+  lists:map(
+    fun(X) -> {C,_} = X, C end, Blanks).
 
 count_occurences(Player, Triad, Board) ->
   E = lists:filter(
@@ -192,13 +223,16 @@ count_occurences(Player, Triad, Board) ->
   Count = erlang:length(E),
   Count.
 
+%% @doc get a data structure representing weights of blank coordinates
 coordinate_weights() ->
-  M = maps:from_list([
-      % Rush for corners
-      {0,3}, {2,3}, {6,3}, {8,3},
-      % Kind of prefer center
-      {4,2}]),
-  M.
+  maps:from_list([
+    % Rush for corners
+    {0,3}, {2,3}, {6,3}, {8,3},
+    % Kind of prefer center
+    {4,2},
+    % Rest
+    {1,0},{3,0},{5,0},{7,0}
+  ]).
 
 %%% Tests
 
@@ -324,3 +358,11 @@ two_of_test() ->
   ?assert(Ret3         == Expected3),
   ?assert(RetNoneFound == []),
   ?assert(RetMixed     == ExpectedMixed).
+
+best_blanks_test() ->
+  Board = array:from_list([x,b,b,
+                           b,b,b,
+                           b,b,x]),
+  Ret = best_blanks(Board),
+  ?assert(Ret == [6,2,4,7,5,3,1]).
+
