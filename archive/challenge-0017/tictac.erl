@@ -167,13 +167,27 @@ two_of(Board, Player) ->
   Rows = [R1,R2,R3],
   Cols = [C1,C2,C3],
   Dias = [D1,D2],
-  Occurences = lists:map(fun(X) -> {X, count_occurences(Player, X, Board)} end,
-                         Rows ++ Cols ++ Dias),
-  Occurences.
+  Occurences =
+    lists:map(
+      fun(X) -> {X, tictac:count_occurences(Player, X, Board)} end,
+      Rows ++ Cols ++ Dias),
+  TwoOcc =
+    lists:filter(
+      fun(X) -> {_,Count} = X, Count == 2 end,
+      Occurences),
+  TriadsOcc2 =
+    lists:map(
+      fun(X) -> {T,_} = X, T end, TwoOcc).
+
+%% TODO
+blank_coordinate_of_triad(Board, Triad, Player) ->
+  E = get_array_elements(Board, Triad),
+  EA = lists:zip(Triad, E).
 
 count_occurences(Player, Triad, Board) ->
-  E = lists:filter(fun(X) -> X =:= Player end,
-                   get_array_elements(Board, Triad)),
+  E = lists:filter(
+    fun(X) -> X =:= Player end,
+    get_array_elements(Board, Triad)),
   Count = erlang:length(E),
   Count.
 
@@ -273,3 +287,8 @@ count_occurences_test() ->
                            b,b,b,
                            b,b,b]),
   ?assert(3 == count_occurences(x, [0,1,2], Board)).
+
+two_of_test() ->
+  Board = array:from_list([x,b,x,
+                           b,b,b,
+                           x,b,x]).
