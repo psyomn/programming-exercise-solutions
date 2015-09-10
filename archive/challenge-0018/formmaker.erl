@@ -45,3 +45,9 @@ parse_name_test() ->
   {Name,Rest} = parse_name(Data, []),
   io:format("~s, Rest: ~s ~n", [Name,Rest]),
   ?assert({Name,Rest} == {"Gender",Rest}).
+
+parse_parameter_name_test() ->
+  Data = "([M]ale, [F]emale):",
+  Expected = {$M, "Male", "[F]emale):"},
+  Ret = parse_parameter_name(Data, []),
+  ?assert(Expected == Ret).
