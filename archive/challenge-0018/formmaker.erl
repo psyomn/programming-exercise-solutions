@@ -1,6 +1,6 @@
 -module(formmaker).
 -author("lethaljellybean@gmail.com").
--export([main/1]).
+-export([main/1,parse/1,parse_name/2,process_html_form/1]).
 
 -include_lib("eunit/include/eunit.hrl").
 
@@ -11,6 +11,7 @@ main([FileName|_]) ->
     {ok, Binary} ->
       S = erlang:binary_to_list(Binary),
       T = formmaker:parse(S),
+      io:format("~p~n", [T]),
       P = formmaker:process_html_form(T);
     {error, enoent} ->
       io:format("No such file or directory~n");
@@ -23,10 +24,18 @@ main([FileName|_]) ->
 %%   [{"Question",[{"M", "Male"},
 %%                 {"F","Female"]}]
 parse(String) ->
-  Questions = parse_questions(String).
+  Questions = parse_questions(String),
+  lists:map(
+    fun(X) ->
+      {Name, Rest} = formmaker:parse_name(X,[]),
+      Parameters = parse_parameters(Rest, []),
+      {Name, Parameters}
+    end, Questions).
 
 %% @doc this gets the label of the question. Return {LabelName, Rest}
 parse_name([]   , Acc) -> {Acc, []};
+parse_name([H|T], Acc) when H == "~n" ->
+  parse_name(T, Acc);
 parse_name([H|T], Acc) when H == $(; H == $\ -> {Acc,[H|T]};
 parse_name([H|T], Acc) when H /= $(; H /= $\ ->
   parse_name(T, Acc ++ [H]).
@@ -37,9 +46,9 @@ parse_parameters([H|T],  Acc) ->
     $) ->
       Acc;
     $\ ->
-      parse_parameters(T, Acc); % skip whitespace
+      parse_parameters(T, Acc); % skip
     $: ->
-      parse_parameters(T, Acc); % skip whitespace
+      parse_parameters(T, Acc); % skip
     _  ->
       {Label, Name, Rest} = parse_parameter_name([H|T], [], none),
       parse_parameters(Rest, Acc ++ [{Label, Name}])
@@ -69,11 +78,20 @@ parse_label([H|T], Label) ->
 %% @doc Given a string which represents the whole form, we return each
 %%   individual question.
 parse_questions(String) ->
-  string:tokens(String, ":").
+  % Remove newline
+  FilteredString = lists:filter(fun(X) -> X /= 10 end, String),
+  string:tokens(FilteredString, ":").
 
 process_html_form(Tokens) -> todo.
 
-write_to_file(String) -> todo.
+write_to_file(String) ->
+  case file:open("output.html", [write]) of
+    {ok, OutFile} ->
+      file:write(OutFile, String),
+      file:close(OutFile);
+    _ ->
+      io:format("Problem writing to file ~n")
+  end.
 
 %%% Tests
 
