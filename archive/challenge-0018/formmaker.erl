@@ -11,8 +11,8 @@ main([FileName|_]) ->
     {ok, Binary} ->
       S = erlang:binary_to_list(Binary),
       T = formmaker:parse(S),
-      io:format("~p~n", [T]),
-      P = formmaker:process_html_form(T);
+      P = formmaker:process_html_form(T),
+      write_to_file(P);
     {error, enoent} ->
       io:format("No such file or directory~n");
     {error, Reason} ->
@@ -31,6 +31,7 @@ parse(String) ->
       Parameters = parse_parameters(Rest, []),
       {Name, Parameters}
     end, Questions).
+
 
 %% @doc this gets the label of the question. Return {LabelName, Rest}
 parse_name([]   , Acc) -> {Acc, []};
@@ -82,7 +83,36 @@ parse_questions(String) ->
   FilteredString = lists:filter(fun(X) -> X /= 10 end, String),
   string:tokens(FilteredString, ":").
 
-process_html_form(Tokens) -> todo.
+process_html_form(Tokens) ->
+  Header = "<html><body><form>",
+  Footer = "</form></body></html>",
+  Body = process_html_question(Tokens),
+  Header ++ Body ++ Footer.
+
+process_html_question([]) -> [];
+process_html_question([Q|RQ]) ->
+  {Label, Choices} = Q,
+  LabelStr = "<p>" ++ Label ++ "</p>",
+  LabelStr ++ process_html_choices(Choices) ++ process_html_question(RQ).
+
+process_html_choices([]) -> [];
+process_html_choices(Choices) ->
+  case erlang:length(Choices) >= 5 of
+    true  -> "<select>" ++ process_html_dropdown(Choices) ++ "</select>";
+    false -> process_html_radios(Choices)
+  end.
+
+process_html_radios([]) -> [];
+process_html_radios([R|RR]) ->
+  {Value,Name} = R,
+  "<input type=\"radio\" name=\"value\" value=\"" ++ Value ++ "\">" ++ Name
+  ++ process_html_radios(RR).
+
+process_html_dropdown([]) -> [];
+process_html_dropdown([D|RD]) ->
+  {Value, Name} = D,
+  "<option value=\"" ++ Value ++ "\">" ++ Name ++ "</option>" ++
+  process_html_dropdown(RD).
 
 write_to_file(String) ->
   case file:open("output.html", [write]) of
