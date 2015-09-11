@@ -31,15 +31,19 @@ parse_name([H|T], Acc) when H == $(; H == $\ -> {Acc,[H|T]};
 parse_name([H|T], Acc) when H /= $(; H /= $\ ->
   parse_name(T, Acc ++ [H]).
 
-parse_parameters([],     Acc)              -> Acc;
-parse_parameters([H|T],  Acc) when H == $\ ->
-  case H == $) of
-    true -> Acc;
-    false -> parse_parameters(T, Acc) % Skip whitespace
-  end;
-parse_parameters(String, Acc) ->
-  {Label, Name, Rest} = parse_parameter_name(String, [], none),
-  parse_parameters(Rest, Acc ++ [{Label, Name}]).
+parse_parameters([],     Acc) -> Acc;
+parse_parameters([H|T],  Acc) ->
+  case H of
+    $) ->
+      Acc;
+    $\ ->
+      parse_parameters(T, Acc); % skip whitespace
+    $: ->
+      parse_parameters(T, Acc); % skip whitespace
+    _  ->
+      {Label, Name, Rest} = parse_parameter_name([H|T], [], none),
+      parse_parameters(Rest, Acc ++ [{Label, Name}])
+  end.
 
 parse_parameter_name([],    Acc, Label) -> {Label, Acc, []};
 parse_parameter_name(Str,   Acc, none)  ->
@@ -101,8 +105,11 @@ parse_questions_test() ->
   ?assert(erlang:length(Ret) == 2).
 
 parse_parameters_test() ->
-  Data = "([M]ale, [F]emale):",
-  Ret = parse_parameters(Data, []),
-  Expected = [{$M, "Male"}, {$F, "Female"}],
-  io:format("~p", [Ret]),
-  ?assert(Expected == Ret).
+  Data  = "([M]ale, [F]emale):",
+  Data2 = "([M]ale, [Fem]ale):",
+  Ret  = parse_parameters(Data, []),
+  Ret2 = parse_parameters(Data2, []),
+  Expected = [{"M", "Male"}, {"F", "Female"}],
+  Expected2 = [{"M", "Male"}, {"Fem", "Female"}],
+  ?assert(Expected == Ret),
+  ?assert(Expected2 == Ret2).
