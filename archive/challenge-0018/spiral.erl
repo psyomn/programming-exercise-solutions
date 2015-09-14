@@ -30,17 +30,27 @@ board_set_curdir(B, Dir) ->
           currpos = B#board.currpos,
           curdir  = Dir}.
 
+board_set_data(B, Data) ->
+  B#board{data    = Data,
+          currpos = B#board.currpos,
+          curdir  = B#board.curdir}.
+
 %% @doc SpiralD are the directions zipped with the number sequence
 spiral_array(SpiralD) ->
   %% N is the largest direction ie. size of array
   {N,_} = hd(SpiralD),
   A = array:new(N*N),
-  Board = #board{data=A, currpos={0,N-1}, curdir=down},
-  spiral_array_back(SpiralD, N, A).
+  Board = #board{data=A, currpos={0,N-1}, curdir=down}.
 
-spiral_array_back([],           _, Array) -> Array;
-spiral_array_back([{N,D}|T], NMax, Array) ->
-  todo.
+make_line(Board,      []) -> Board;
+make_line(Board, SpiralD) ->
+  CurPos = Board#board.currpos,
+  case Board#board.curdir of
+    u -> todo;
+    d -> todo;
+    l -> todo;
+    r -> todo
+  end.
 
 spiral_directions(N) when N rem 2 == 0 ->
   L = lists:reverse(lists:seq(3,N-1,2)),
@@ -66,7 +76,6 @@ repeat_test() ->
 new_test() ->
   %% NB: Even and odd numbers given yield different endings in the sequences.
   %%   This is the reason you will see both of those tests listed here.
-
   ?assert([{10,d}, {9,l}, {9,u}, {7,r}, {7,d},
            {5,l}, {5,u}, {3,r}, {3,d}, {1,l}]
           ==
@@ -78,7 +87,20 @@ new_test() ->
           spiral:new(11)).
 
 board_set_coord_test() ->
-  B = #board{data=array:new(10), currpos={1,1}, curdir=down},
+  B = #board{data=array:new(10), currpos={1,1}, curdir=d},
   C = board_set_coord(B, 4, 4),
   ?assert(C#board.currpos == {4, 4}).
+
+board_set_curdir_test() ->
+  B = #board{data=array:new(10), currpos={1,1}, curdir=d},
+  C = board_set_curdir(B, l),
+  ?assert(C#board.curdir == l).
+
+board_set_data_test() ->
+  B = #board{data=array:set(3,3, array:new(10)), currpos={1,1}, curdir=d},
+  C = board_set_data(B, array:set(4,4,array:new(11))),
+  ?assert(B#board.data == array:set(3,3,array:new(10))),
+  ?assert(C#board.data    == array:set(4,4,array:new(11))),
+  ?assert(C#board.currpos == B#board.currpos),
+  ?assert(C#board.curdir  == B#board.curdir).
 
