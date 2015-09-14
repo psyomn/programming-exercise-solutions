@@ -2,17 +2,45 @@
 -author("lethaljellybean@gmail.com").
 -compile(export_all).
 
+-include_lib("eunit/include/eunit.hrl").
+
+-record(board, {data,currpos,curdir=down}).
+
 main(_) ->
-  M = directions(),
-  Even = spiral:spiral_directions(10),
-  Odd  = spiral:spiral_directions(11),
-  CycleEven = cyclezip(Even, M, d),
-  CycleOdd  = cyclezip(Odd,  M, d),
+  CycleEven = spiral:new(10),
+  CycleOdd = spiral:new(11),
   io:format("10: ~p~n", [CycleEven]),
   io:format("11: ~p~n", [CycleOdd]).
 
 directions() ->
   maps:from_list([{d, l}, {l, u}, {u, r}, {r, d}]).
+
+new(N) ->
+  M = directions(),
+  L = spiral:spiral_directions(N),
+  cyclezip(L, M, d).
+
+board_set_coord(B, X, Y) ->
+  B#board{data    = B#board.data,
+          currpos = {X, Y},
+          curdir  = B#board.curdir}.
+
+board_set_curdir(B, Dir) ->
+  B#board{data    = B#board.data,
+          currpos = B#board.currpos,
+          curdir  = Dir}.
+
+%% @doc SpiralD are the directions zipped with the number sequence
+spiral_array(SpiralD) ->
+  %% N is the largest direction ie. size of array
+  {N,_} = hd(SpiralD),
+  A = array:new(N*N),
+  Board = #board{data=A, currpos={0,N-1}, curdir=down},
+  spiral_array_back(SpiralD, N, A).
+
+spiral_array_back([],           _, Array) -> Array;
+spiral_array_back([{N,D}|T], NMax, Array) ->
+  todo.
 
 spiral_directions(N) when N rem 2 == 0 ->
   L = lists:reverse(lists:seq(3,N-1,2)),
@@ -29,4 +57,28 @@ cyclezip([], _, _) -> [];
 cyclezip([H|T], M, CurrDir) ->
   NextDir = maps:get(CurrDir, M),
   [{H,CurrDir}] ++ cyclezip(T, M, NextDir).
+
+%%% Test
+
+repeat_test() ->
+  ?assert([1,1,2,2] == repeat([1,2])).
+
+new_test() ->
+  %% NB: Even and odd numbers given yield different endings in the sequences.
+  %%   This is the reason you will see both of those tests listed here.
+
+  ?assert([{10,d}, {9,l}, {9,u}, {7,r}, {7,d},
+           {5,l}, {5,u}, {3,r}, {3,d}, {1,l}]
+          ==
+          spiral:new(10)),
+
+  ?assert([{11,d}, {10,l}, {10,u}, {8,r}, {8,d},
+           {6,l}, {6,u}, {4,r}, {4,d}, {2,l}, {2,u}]
+          ==
+          spiral:new(11)).
+
+board_set_coord_test() ->
+  B = #board{data=array:new(10), currpos={1,1}, curdir=down},
+  C = board_set_coord(B, 4, 4),
+  ?assert(C#board.currpos == {4, 4}).
 
