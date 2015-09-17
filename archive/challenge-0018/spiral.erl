@@ -114,7 +114,8 @@ board_set_data_test() ->
   ?assert(C#board.curdir  == B#board.curdir).
 
 board_set_value_test() ->
-  B  = #board{data=array:set(3,3, array:new(10)), currpos={1,1}, curdir=d},
+  A  = array:set(3,3,array:new(100)),
+  B  = #board{data=A, currpos={1,1}, curdir=d, length=10},
   B2 = spiral:board_set_value(B,3,3,x),
   V  = spiral:board_get_value(B2,3,3),
   ?assert(V == x).
