@@ -37,6 +37,9 @@ board_set_value(B, X, Y, V) ->
 board_get_value(B, X, Y) ->
   array:get(X * Y + X, B#board.data).
 
+make_board() ->
+  #board{data=array:new(10), currpos={0,0}, curdir=d, length=10}.
+
 %% @doc SpiralD are the directions zipped with the number sequence
 spiral_array(SpiralD) ->
   %% N is the largest direction ie. size of array
@@ -50,7 +53,7 @@ make_lines(Board,      []) -> Board;
 make_lines(Board, SpiralD) ->
   {CurX, CurY} = Board#board.currpos,
   {N,Dir} = hd(SpiralD),
-  OffsetPos = CurX * CurY + CurX,
+  NewData = spiral:board_set_value(Board, CurX, CurY, x),
   NewPos = case Board#board.curdir of
              u -> {CurX, CurY - 1};
              d -> {CurX, CurY + 1};
@@ -112,7 +115,7 @@ board_set_data_test() ->
 
 board_set_value_test() ->
   B  = #board{data=array:set(3,3, array:new(10)), currpos={1,1}, curdir=d},
-  B2 = board_set_value(B,3,3,x),
-  V  = board_get_value(3,3,B2),
+  B2 = spiral:board_set_value(B,3,3,x),
+  V  = spiral:board_get_value(B2,3,3),
   ?assert(V == x).
 
