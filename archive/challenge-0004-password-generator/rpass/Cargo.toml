@@ -1,0 +1,10 @@
+[package]
+name = "rpass"
+version = "0.1.0"
+authors = ["psyomn <lethaljellybean@gmail.com>"]
+
+[[bin]]
+name = "rpass"
+
+[dependencies]
+rand = "*"
