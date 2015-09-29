@@ -8,3 +8,4 @@ name = "rpass"
 
 [dependencies]
 rand = "*"
+getopts = "0.2"
