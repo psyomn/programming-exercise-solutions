@@ -1,18 +1,16 @@
 extern crate arrr_rust;
-extern crate rand;
 
 use arrr_rust::{Pirate, PirateBuilder, PirateArena};
-use rand::Rng;
 
 fn main() {
-    let mut blackbeard: Pirate =
+    let blackbeard: Pirate =
         PirateBuilder::new()
             .name("Blackbeard".to_string())
             .attack(4)
-            .defense(2)
+            .defense(4)
             .finalize();
 
-    let mut redbeard: Pirate =
+    let redbeard: Pirate =
         PirateBuilder::new()
             .name("Redbeard".to_string())
             .attack(8)

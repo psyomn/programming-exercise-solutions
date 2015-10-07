@@ -44,13 +44,12 @@ impl Pirate {
     pub fn rcv_damage(&mut self, d: u32) -> () {
         let mut rng = rand::thread_rng();
         let t_def = rng.gen::<u32>() % self.defense;
-        let dmg = if d < t_def { d - t_def } else { 0 };
-        let final_dmg = if d < 0 { 0 } else { d };
-        self.hitpoints = if self.hitpoints < final_dmg {
+        let dmg = if d < t_def { 0 } else { d - t_def };
+        self.hitpoints = if self.hitpoints < dmg {
             0
         }
         else {
-            self.hitpoints - final_dmg
+            self.hitpoints - dmg
         };
     }
 }
