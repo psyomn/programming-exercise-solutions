@@ -1,0 +1,7 @@
+[package]
+name = "arrr-rust"
+version = "0.1.0"
+authors = ["psyomn <lethaljellybean@gmail.com>"]
+
+[dependencies]
+rand = "0.3"
