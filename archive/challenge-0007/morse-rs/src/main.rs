@@ -1,6 +1,7 @@
 extern crate morse;
 extern crate getopts;
 
+use std::convert::AsRef;
 use std::collections::HashMap;
 use getopts::Options;
 use std::env;
@@ -40,7 +41,8 @@ fn main() {
         let signals: Vec<&str> = last.split(" ").collect::<Vec<&str>>();
 
         for c in signals.iter() {
-            match alpha.get(c.to_string()) {
+            let cc: &str = c.as_ref();
+            match alpha.get(cc) {
                 Some(v) => print!("{}", v),
                 None => {},
             }
