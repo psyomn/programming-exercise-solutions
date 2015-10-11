@@ -71,4 +71,11 @@ pub fn make_morse_hash() -> HashMap<String, String> {
     morse
 }
 
+fn morse_to_ascii(morse: String) -> String {
+    return "todo".to_string();
+}
+
+fn ascii_to_morse(ascii: String) -> String {
+    return "todo".to_string();
+}
 
