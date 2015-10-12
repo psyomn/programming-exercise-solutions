@@ -15,13 +15,22 @@ fn print_usage(program: &str, opts: Options) -> () {
 
 fn main() {
     let args: Vec<String> = env::args().collect();
+    let mut fake_args: Vec<String> = Vec::new();
+
+    match args.iter().nth(1) {
+        Some(v) => {
+            let vv = v.clone();
+            fake_args.push(vv);
+        },
+        None => {},
+    }
 
     let mut opts = Options::new();
     opts.optflag("m", "morse", "generate morse from alphabetic input");
     opts.optflag("a", "alpha", "generate alphabetic stuff from morse input");
     opts.optflag("h", "help", "show help");
 
-    let matches = match opts.parse(&args[1..]) {
+    let matches = match opts.parse(&fake_args[0..]) {
         Ok(m) => { m },
         Err(f) => { panic!("{}", f) },
     };
@@ -32,26 +41,16 @@ fn main() {
     }
 
     if matches.opt_present("m") {
-        let last = match args.last() {
-            Some(v) => v.clone(),
-            None => return,
-        };
-
-        let alpha: HashMap<String,String> = make_alpha_hash();
-        let signals: Vec<&str> = last.split(" ").collect::<Vec<&str>>();
-
-        for c in signals.iter() {
-            let cc: &str = c.as_ref();
-            match alpha.get(cc) {
-                Some(v) => print!("{}", v),
-                None => {},
-            }
-        }
-
+        let cargs: Vec<String> = args.iter().cloned().skip(2).collect();
+        let s: String = morse::morse_to_ascii(cargs.join(" "));
+        println!("{}", s);
         return;
     }
 
     if matches.opt_present("a") {
+        let cargs: Vec<String> = args.iter().cloned().skip(2).collect();
+        let s: String = morse::ascii_to_morse(cargs.join(" "));
+        println!("{}", s);
         return;
     }
 }
