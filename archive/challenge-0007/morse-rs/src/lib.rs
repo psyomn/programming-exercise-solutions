@@ -71,10 +71,14 @@ pub fn make_morse_hash() -> HashMap<String, String> {
     morse
 }
 
+/// Expects to give in parameters of morse separated by whitespace.
+/// returns a list of letters
 fn morse_to_ascii(morse: String) -> String {
     return "todo".to_string();
 }
 
+/// Expects to be given a string of characters - a phrase; 
+/// returns a list of morse codes
 fn ascii_to_morse(ascii: String) -> String {
     return "todo".to_string();
 }
