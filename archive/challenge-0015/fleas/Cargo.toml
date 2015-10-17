@@ -1,8 +1,10 @@
 [package]
-
 name = "fleas"
 version = "0.0.1"
 authors = ["psyomn <lethaljellybean@gmail.com>"]
+
+[[bin]]
+name = "fleas-rs"
 
 [dependencies]
 rand = "*"
