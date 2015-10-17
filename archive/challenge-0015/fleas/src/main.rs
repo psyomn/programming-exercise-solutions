@@ -4,7 +4,7 @@ mod board;
 fn main() {
     let mut results = vec![];
 
-    for _ in range(0u, 20) {
+    for _ in 0..20 {
         print!(".");
         std::io::stdio::flush();
         results.push(simulate());
@@ -22,7 +22,7 @@ fn main() {
 /// Run the whole thing once, return the number of empty cells
 fn simulate() -> uint {
     let mut board = Board::new();
-    for _ in range(0i, 50) {
+    for _ in 0..50 {
         // Uncomment the bellow if you want to print the boards
         // board.print();
         board.step();
