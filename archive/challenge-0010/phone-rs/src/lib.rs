@@ -28,12 +28,11 @@ pub fn vcheck3 (s: &str) -> bool {
     re2.is_match(s)
 }
 
-/// Just ignore this. 
+/// Just ignore this.
 pub fn parenthesis_check() -> bool {
     let re: Regex = Regex::new(r"\(a\)").unwrap();
     re.is_match("(a)")
 }
-
 
 #[cfg(test)]
 mod test {
