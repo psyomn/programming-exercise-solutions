@@ -23,7 +23,7 @@ pub fn vcheck2 (s: &str) -> bool {
 pub fn vcheck3 (s: &str) -> bool {
     let first_three_or_not: &str = r"((\(\d{3}\))(\s?))?";
     let last_part: &str = r"(\d{3}-\d{4})";
-    let complete: String = format!("{}{}", first_three_or_not, last_part);
+    let complete: String = format!("({}{})", first_three_or_not, last_part);
     let re2: Regex = Regex::new(complete.as_ref()).unwrap();
     re2.is_match(s)
 }
@@ -32,6 +32,12 @@ pub fn vcheck3 (s: &str) -> bool {
 pub fn parenthesis_check() -> bool {
     let re: Regex = Regex::new(r"\(a\)").unwrap();
     re.is_match("(a)")
+}
+
+pub fn whitespace_zero_or_one() -> bool {
+    let re: Regex = Regex::new(r"(a\s?b)?").unwrap();
+    re.is_match("ab") && re.is_match("a b") && !re.is_match("a   b") &&
+        re.is_match("")
 }
 
 #[cfg(test)]
@@ -84,6 +90,7 @@ mod test {
     }
 
     #[test]
+    /// I think the regex library might be wonky
     fn test_parenthesis_more_space_vcheck3() -> () {
         assert_eq!(vcheck3("(123)    123-1231"), false);
     }
@@ -121,6 +128,11 @@ mod test {
     #[test]
     fn test_parenthesis_regex() -> () {
         assert!(parenthesis_check());
+    }
+
+    #[test]
+    fn test_space_questionmark() -> () {
+        assert!(whitespace_zero_or_one());
     }
 }
 
