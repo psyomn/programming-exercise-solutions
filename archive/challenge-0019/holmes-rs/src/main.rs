@@ -36,13 +36,12 @@ fn main() {
     }
 
     for c in contents.chars() {
-        match counts.contains_key(&c) {
-            false => continue,
-            true => {
-                let prev = counts.get(&c).unwrap().clone();
-                counts.insert(c, prev + 1);
-            },
+        let v = match counts.get(&c) {
+            Some(v) => v.clone(),
+            None => continue,
         };
+        let nv = v + 1;
+        counts.insert(c, nv);
     }
 
     println!("{:#?}", counts);
