@@ -1,0 +1,7 @@
+[package]
+authors = ["psyomn <lethaljellybean@gmail.com>"]
+name = "holmes-words"
+version = "0.1.0"
+
+[dependencies]
+regex = "0.1.41"
