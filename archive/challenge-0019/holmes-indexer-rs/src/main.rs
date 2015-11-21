@@ -3,15 +3,27 @@ use std::fs::File;
 use std::io::Read;
 use std::collections::HashMap;
 
+use std::collections::hash_map::Entry;
+
 #[derive(Debug)]
 struct Line<'a> {
     line: &'a str,
     number: usize,
 }
 
-struct Word {
+#[derive(Debug)]
+struct WordOcc {
     occurence: usize,
     line_number: usize,
+}
+
+impl WordOcc {
+    pub fn new(ln: usize, occ: usize) -> WordOcc {
+        WordOcc {
+            occurence: occ,
+            line_number: ln,
+        }
+    }
 }
 
 fn main() {
@@ -41,10 +53,27 @@ fn main() {
         .enumerate()
         .map(|e| {
             let (ix, ln) = e;
-            Line { line: ln, number: ix } })
+            Line { line: ln.trim(), number: ix } })
         .collect();
 
-    let words: HashMap<String, usize> = HashMap::new();
+    let mut words_ix: HashMap<&str, WordOcc> = HashMap::new();
 
+    for line in lines {
+        let words: Vec<&str> = line.line.split(" ").collect();
+        for word in words {
+            match words_ix.entry(word) {
+                Entry::Occupied(mut entry) => {
+                    let mut wordocc = entry.get_mut();
+                    wordocc.occurence += 1;
+                },
+                Entry::Vacant(entry) => {
+                    let wordocc = WordOcc::new(line.number, 0);
+                    entry.insert(wordocc);
+                },
+            };
+        }
+    }
+
+    println!("{:#?}", words_ix);
 }
 
