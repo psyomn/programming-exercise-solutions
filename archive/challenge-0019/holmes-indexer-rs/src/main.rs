@@ -14,14 +14,14 @@ struct Line<'a> {
 #[derive(Debug)]
 struct WordOcc {
     occurence: usize,
-    line_number: usize,
+    line_number: Vec<usize>,
 }
 
 impl WordOcc {
     pub fn new(ln: usize, occ: usize) -> WordOcc {
         WordOcc {
             occurence: occ,
-            line_number: ln,
+            line_number: vec![ln],
         }
     }
 }
@@ -65,6 +65,7 @@ fn main() {
                 Entry::Occupied(mut entry) => {
                     let mut wordocc = entry.get_mut();
                     wordocc.occurence += 1;
+                    wordocc.line_number.push(line.number);
                 },
                 Entry::Vacant(entry) => {
                     let wordocc = WordOcc::new(line.number, 0);
@@ -73,7 +74,5 @@ fn main() {
             };
         }
     }
-
-    println!("{:#?}", words_ix);
 }
 
