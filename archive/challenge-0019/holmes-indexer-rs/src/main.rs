@@ -78,8 +78,12 @@ fn main() {
     // Words with freq < 100
     let nwords: HashMap<&str, WordOcc> = words_ix
         .into_iter()
-        .filter(|&(_, ref v)| { v.occurence > 100 })
+        .filter(|&(_, ref v)| { v.occurence < 100 })
         .collect();
 
+    for (k,v) in nwords {
+        println!("{}: {:?}",
+                 k,
+                 v.line_number);
+    }
 }
-
