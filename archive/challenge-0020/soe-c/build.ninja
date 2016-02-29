@@ -1,0 +1,10 @@
+cflags= -g -Wall -Werror
+ldflags= -lm
+
+rule cc
+  command = gcc $ldflags $cflags -c $in -o $out
+rule link
+  command = gcc $ldflags $in -o soe.bin
+
+build soe.o: cc soe.c
+build soe.bin: link soe.o main.c
