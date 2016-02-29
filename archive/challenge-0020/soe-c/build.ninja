@@ -1,4 +1,4 @@
-cflags= -g -Wall -Werror
+cflags= -Wall -Werror
 ldflags= -lm
 
 rule cc
