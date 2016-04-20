@@ -48,6 +48,21 @@ impl GameMap {
         self.grid.len()
     }
 
+    pub fn set_at(&mut self, p: Point, value: char) -> Result<(), String> {
+        let Point { x: x, y: y } = p;
+        let tile = self.grid
+                       .get_mut(y)
+                       .map(|e| e.get(x));
+        match tile {
+            Some(v) => {
+                let val =  v.unwrap();
+                val = &' ';
+                Ok(())
+            },
+            None => Err("Problem finding those coordinates".into())
+        }
+    }
+
     pub fn at(&self, p: Point) -> MapItem {
         let Point { x: at_x, y: at_y } = p;
 
@@ -70,6 +85,13 @@ impl GameMap {
                 }
             }
         }
+    }
+}
+
+struct GameMazeBuilder;
+impl GameMazeBuilder {
+    pub fn random(g: GameMap) -> GameMap {
+        g
     }
 }
 
