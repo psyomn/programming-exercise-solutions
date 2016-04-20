@@ -52,11 +52,10 @@ impl GameMap {
         let Point { x: x, y: y } = p;
         let tile = self.grid
                        .get_mut(y)
-                       .map(|e| e.get(x));
+                       .unwrap()
+                       .get_mut(x);
         match tile {
             Some(v) => {
-                let val =  v.unwrap();
-                val = &' ';
                 Ok(())
             },
             None => Err("Problem finding those coordinates".into())
