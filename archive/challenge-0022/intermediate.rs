@@ -1,8 +1,10 @@
 use std::fmt;
 
 fn main() -> () {
-    let game_map: GameMap = GameMap::new();
+    let mut game_map: GameMap = GameMap::new();
     let mut player_coords = Point { x: 1, y: 1 };
+
+    game_map = GameMazeBuilder::random(game_map);
 
     println!("{}", game_map);
 
