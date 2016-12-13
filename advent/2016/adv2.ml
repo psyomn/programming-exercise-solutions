@@ -65,15 +65,6 @@ module Adv2 = struct
                 | Left,  (x, y) -> (decr x, y)
                 | Right, (x, y) -> (incr x, y)
 
-        let print_tuple (x, y) = printf "(%d, %d)\n" x y
-
-        let print_direction d =
-                match d with
-                | Right -> print_string "r "
-                | Left  -> print_string "l "
-                | Up    -> print_string "u "
-                | Down  -> print_string "d "
-
         let rec print_list l =
                 match l with
                 | head :: rest -> print_int head; print_list rest

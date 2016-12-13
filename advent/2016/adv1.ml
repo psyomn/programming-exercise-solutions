@@ -12,8 +12,6 @@ module Adv1 = struct
 
         type token = direction * int
 
-        let ttt: token = (Left, 12)
-
         type cursor =
                 | North
                 | East
@@ -99,7 +97,7 @@ module Adv1 = struct
         let run =
                 let adv_coords = new coords in
                 let tokens = parse_file_data in
-                let _ = List.iter (fun x -> adv_coords#consume_token x) tokens in
+                let _ = List.iter adv_coords#consume_token tokens in
                 let _ = adv_coords#print in
                 ()
 end
