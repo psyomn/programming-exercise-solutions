@@ -7,4 +7,7 @@ module Advent : sig
 
         val data_lines: string -> string list
         (* load file as list of lines *)
+
+        val zip3: 'a list -> 'a list -> 'a list -> ('a * 'a * 'a) list
+        (* zip 3 lists together *)
 end
