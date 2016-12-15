@@ -4,4 +4,7 @@ module Advent : sig
 
         val load_file: string -> string
         (* get contents of a file provided its filename *)
+
+        val data_lines: string -> string list
+        (* load file as list of lines *)
 end

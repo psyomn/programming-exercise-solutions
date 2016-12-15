@@ -1,6 +1,7 @@
 open Sys
 open Str
 open Printf
+open Advent
 
 module Adv2 = struct
         exception Bad_Coord_To_Number
@@ -70,21 +71,13 @@ module Adv2 = struct
                 | head :: rest -> print_int head; print_list rest
                 | [] -> print_endline ""
 
-        let data_lines f =
-                let ic = open_in f in
-                let n = (in_channel_length ic) in
-                let s = Bytes.create n in
-                really_input ic s 0 n;
-                close_in ic;
-                Str.split (Str.regexp "\n") s
-
         let str_to_charlist str =
                 let rec exp i l =
                 if i < 0 then l else exp (i - 1) (str.[i] :: l) in
                 exp (String.length str - 1) []
 
         let prepare_data () =
-                let chr_data = List.map str_to_charlist (data_lines filename) in
+                let chr_data = List.map str_to_charlist (Advent.data_lines filename) in
                 List.map char_list_to_dir_list chr_data
 
         let rec consume_row c row =
@@ -100,7 +93,7 @@ module Adv2 = struct
                         let number = coord_to_keypad last_coord in
                         number :: process_all_movement last_coord rest
 
-        let run =
+        let run () =
                 let data = prepare_data () in
                 let code = process_all_movement (0, 0) data in
                 print_list code

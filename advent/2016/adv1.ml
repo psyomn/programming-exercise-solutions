@@ -94,7 +94,7 @@ module Adv1 = struct
                 let str_tokens: string list = Str.split (Str.regexp ", *") file_s in
                 List.map (fun x -> parse_token x) str_tokens
 
-        let run =
+        let run () =
                 let adv_coords = new coords in
                 let tokens = parse_file_data in
                 let _ = List.iter adv_coords#consume_token tokens in
